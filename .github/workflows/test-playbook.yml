@@ -33,6 +33,4 @@ jobs:
 
       - name: Run Playbook Dry-Run (Check Mode)
         run: |
-          # Running with -c local treats the runner itself as the target machine.
-          # We use --check to simulate the changes without bricking the runner's network.
-          ansible-playbook playbook.yml -i "localhost," -c local --check
+          ansible-playbook playbook.yml -i "localhost," -c local --check --extra-vars "ansible_service_mgr=mock"
