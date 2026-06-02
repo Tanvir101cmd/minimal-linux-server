@@ -174,20 +174,20 @@
       enabled: true
     when: lookup('env', 'GITHUB_ACTIONS') != 'true'
   
-  - name: Disable and remove swapfile
-    ansible.builtin.command: swapoff /swapfile
+  - name: Disable and remove swap.img
+    ansible.builtin.command: swapoff /swap.img
     failed_when: false
     changed_when: false
   
-  - name: Remove swapfile from fstab
+  - name: Remove swap.img from fstab
     ansible.builtin.lineinfile:
       path: /etc/fstab
-      regexp: '.*swapfile.*'
+      regexp: '.*swap.img*'
       state: absent
   
   - name: Delete swapfile
     ansible.builtin.file:
-      path: /swapfile
+      path: /swap.img
       state: absent
 
   handlers:
@@ -195,17 +195,21 @@
       ansible.builtin.systemd:
         name: ssh
         state: restarted
+      failed_when: false
     
     - name: Restart fail2ban service
       ansible.builtin.systemd:
         name: fail2ban
         state: restarted
+      failed_when: false
     
     - name: Restart systemd logind service
       ansible.builtin.systemd:
         name: systemd-logind
         state: restarted
+      failed_when: false
 
     - name: Reload systemd
       ansible.builtin.systemd:
         daemon_reload: true
+      failed_when: false
