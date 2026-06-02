@@ -19,7 +19,7 @@ Run the following commands on your target server **before** running the playbook
 echo 'tanvir ALL=(ALL) NOPASSWD: /usr/bin/python3.14' | sudo tee /etc/sudoers.d/ansible-automation
 ```
 
-Set the correct secure file permissions (Read-only)
+# Set the correct secure file permissions (Read-only)
 ```bash
 sudo chmod 440 /etc/sudoers.d/ansible-automation
 ```
