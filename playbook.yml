@@ -23,8 +23,6 @@
         - git
         - btop
         - vim
-        - fastfetch
-        - ncdu
       state: present
       update_cache: true
 
