@@ -172,6 +172,7 @@
       name: zramswap
       state: started
       enabled: true
+    when: lookup('env', 'GITHUB_ACTIONS') != 'true'
   
   - name: Disable and remove swapfile
     ansible.builtin.command: swapoff /swapfile
