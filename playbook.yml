@@ -79,6 +79,7 @@
       name: tailscaled
       state: started
       enabled: true
+    when: lookup('env', 'GITHUB_ACTIONS') != 'true'
   
   - name: Setting UFW
     community.general.ufw:

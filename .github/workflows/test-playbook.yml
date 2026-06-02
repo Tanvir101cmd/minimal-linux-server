@@ -31,18 +31,6 @@ jobs:
           # 3. Create a dummy swap.img file so the deletion tasks don't crash
           sudo dd if=/dev/zero of=/swap.img bs=1M count=10
 
-          # 4. Mock tailscaled systemd so that dry-run passes
-          sudo mkdir /etc/systemd/system/tailscaled.service << EOF
-          [Unit]
-          Description=Tailscale node agent (Mock for CI)
-          [Service]
-          ExecStart=/bin/true
-          [Install]
-          WantedBy=multi-user.target
-          EOF
-          sudo systemctl daemon-reload
-
-
       - name: Run Playbook Dry-Run (Check Mode)
         run: |
           # Running with -c local treats the runner itself as the target machine.
