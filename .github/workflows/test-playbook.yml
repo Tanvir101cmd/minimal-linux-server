@@ -1,0 +1,38 @@
+name: Test Ansible Playbook Execution
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Ansible & Requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+          ansible-galaxy collection install ansible.posix community.general
+
+      - name: Create Mock Environment Files
+        run: |
+          # 1. Create the fake SSH key your lookup command relies on
+          mkdir -p ~/.ssh
+          ssh-keygen -t rsa -b 2048 -f ~/.ssh/hp -N ""
+          
+          # 2. Add the user 'tanvir' so the playbook doesn't fail trying to find it
+          sudo useradd -m tanvir
+          
+          # 3. Create a dummy swap.img file so the deletion tasks don't crash
+          sudo dd if=/dev/zero of=/swap.img bs=1M count=10
+
+      - name: Run Playbook Dry-Run (Check Mode)
+        run: |
+          # Running with -c local treats the runner itself as the target machine.
+          # We use --check to simulate the changes without bricking the runner's network.
+          ansible-playbook playbook.yml -i "localhost," -c local --check
