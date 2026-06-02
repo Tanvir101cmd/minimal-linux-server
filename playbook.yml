@@ -1,0 +1,211 @@
+- name: Automate minimal + hardened ubuntu server
+  hosts: all
+  become: true
+  become_method: sudo
+
+  vars:
+    ssh_port: "2222"
+    ntfs_drive_uuid: "01D858C886F164A0"
+    ntfs_mount_path: "/mnt/Files"
+    username: "tanvir"
+
+  tasks:
+  - name: Update apt cache & upgrade all packages
+    ansible.builtin.apt:
+      update_cache: true
+      upgrade: dist
+      cache_valid_time: 3600
+
+  - name: Install baseline pkgs
+    ansible.builtin.apt:
+      name:
+        - curl
+        - git
+        - btop
+        - vim
+        - fastfetch
+        - ncdu
+      state: present
+      update_cache: true
+
+  - name: Install OpenSSH
+    ansible.builtin.apt:
+      name: openssh-server
+      state: present
+
+  - name: Deploy ssh pub key for the user
+    ansible.posix.authorized_key:
+      user: "{{ username }}"
+      state: present
+      key: "{{ lookup('file', '~/.ssh/hp.pub') }}"
+  
+  - name: Backup default ssh conf
+    ansible.builtin.copy:
+      src: /etc/ssh/sshd_config
+      dest: /etc/ssh/sshd_config.backup
+      remote_src: true
+      force: false
+
+  - name: SSH Hardening
+    ansible.builtin.lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: present
+    loop:
+      - { regexp: '^#?Port', line: 'Port {{ ssh_port }}'}
+      - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no'}
+      - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no'}
+      - { regexp: '^#?PubkeyAuthentication', line: 'PubkeyAuthentication yes'}
+      - { regexp: '^#?KbdInteractiveAuthentication', line: 'KbdInteractiveAuthentication no'}
+    notify: Restart ssh service
+
+  - name: Remove cloud-init sshd override
+    ansible.builtin.file:
+      path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+      state: absent
+    notify: Restart ssh service
+
+  - name: Checking if tailscale is installed
+    ansible.builtin.command: which tailscale
+    register: tailscale_check
+    failed_when: false
+    changed_when: false
+
+  - name: Download and execute Tailscale installer script
+    ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
+    when: tailscale_check.rc != 0
+
+  - name: Ensuring tailscale and up and running
+    ansible.builtin.systemd:
+      name: tailscaled
+      state: started
+      enabled: true
+  
+  - name: Setting UFW
+    community.general.ufw:
+      direction: "{{ item.direction }}"
+      policy: "{{ item.policy }}"
+    loop:
+      - { direction: 'incoming', policy: 'deny' }
+      - { direction: 'outgoing', policy: 'allow' }
+
+  - name: Allow OpenWeb Traffic Ports
+    community.general.ufw:
+      rule: allow
+      port: "{{ item }}"
+      proto: tcp
+    loop:
+      - '80'
+      - '443'
+    
+  - name: Allow tailscale interface
+    community.general.ufw:
+      rule: allow
+      interface: tailscale0
+      direction: in
+
+  - name: Rate-limit SSH custom port
+    community.general.ufw:
+      rule: limit
+      port: "{{ ssh_port }}"
+      proto: tcp
+  
+  - name: Enable firewall
+    community.general.ufw:
+      state: enabled
+
+  - name: Install fail2ban
+    ansible.builtin.apt:
+      name: fail2ban
+      state: present
+  
+  - name: Configure fail2ban
+    ansible.builtin.blockinfile:
+      path: /etc/fail2ban/jail.d/sshd.conf
+      create: true
+      block: |
+        [sshd]
+        enabled  = true
+        port     = {{ ssh_port }}
+        filter   = sshd
+        logpath  = /var/log/auth.log
+        maxretry = 5
+        bantime  = 1h
+        findtime = 10m
+    notify: Restart fail2ban service
+    
+  # Optional tweaks
+  - name: Configure systemd to ignore laptop lid close
+    ansible.builtin.lineinfile:
+      path: /etc/systemd/logind.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: present
+    loop:
+      - { regexp: '^#?HandleLidSwitch=', line: 'HandleLidSwitch=ignore' }
+      - { regexp: '^#?HandleLidSwitchExternalPower', line: 'HandleLidSwitchExternalPower=ignore' }
+      - { regexp: '^#?HandleLidSwitchDocked=', line: 'HandleLidSwitchDocked=ignore' }
+    notify: Restart systemd logind service
+
+  - name: Create mount dir for NTFS partition
+    ansible.builtin.file:
+      path: "{{ ntfs_mount_path }}"
+      state: directory
+      mode: '0755'
+  
+  - name: Adding NTFS mount conf to /etc/fstab
+    ansible.builtin.mount:
+      path: "{{ ntfs_mount_path }}"
+      src: "UUID={{ ntfs_drive_uuid }}"
+      fstype: ntfs3
+      opts: "defaults,uid=1000,gid=1000,umask=022,nofail,noauto,force,x-systemd.automount"
+      state: present
+    notify: Reload systemd
+
+  - name: Install zram
+    ansible.builtin.apt:
+      name: zram-tools
+      state: present
+  
+  - name: Ensuring zram is up and running
+    ansible.builtin.systemd:
+      name: zramswap
+      state: started
+      enabled: true
+  
+  - name: Disable and remove swapfile
+    ansible.builtin.command: swapoff /swapfile
+    failed_when: false
+    changed_when: false
+  
+  - name: Remove swapfile from fstab
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      regexp: '.*swapfile.*'
+      state: absent
+  
+  - name: Delete swapfile
+    ansible.builtin.file:
+      path: /swapfile
+      state: absent
+
+  handlers:
+    - name: Restart ssh service
+      ansible.builtin.systemd:
+        name: ssh
+        state: restarted
+    
+    - name: Restart fail2ban service
+      ansible.builtin.systemd:
+        name: fail2ban
+        state: restarted
+    
+    - name: Restart systemd logind service
+      ansible.builtin.systemd:
+        name: systemd-logind
+        state: restarted
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
