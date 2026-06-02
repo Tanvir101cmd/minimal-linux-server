@@ -2,6 +2,8 @@
 
 This guide documents my personal setup process for setting up a baseline for a homelab or remote server, starting from mounting drives to configuring SSH and network protection tools like **fail2ban** and **UFW**.
 
+---
+
 If you prefer to understand the under-the-hood mechanics or just want to execute the steps line-by-line by manually, please refer to the [Manual Setup](./docs/MANUAL_SETUP.md)
 
 ## IaC
@@ -22,8 +24,6 @@ echo 'tanvir ALL=(ALL) NOPASSWD: /usr/bin/python3.14' | sudo tee /etc/sudoers.d/
 sudo chmod 440 /etc/sudoers.d/ansible-automation
 ```
 
----
-
 ### 2. Local Setup from host -> server
 ```bash
 # Install Ansible via Homebrew (for macOS)
@@ -36,8 +36,6 @@ Create a hosts.ini file in the project root directory to map the server's locati
 [homelab]
 192.168.0.150 ansible_port=22
 ```
-
----
 
 ### 3. Run the Ansible playbook
 
