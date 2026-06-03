@@ -46,7 +46,7 @@ jobs:
 
       - name: Create test vars file
         run: |
-          cat > vars/config.yml << EOF
+          cat > roles/linux_baseline/vars/main.yml << EOF
           username: "testuser"
           pub_key: "~/.ssh/id_ed25519.pub"
           ssh_port: "2222"
