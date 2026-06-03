@@ -32,7 +32,7 @@ Run the following commands on your target server **before** running the playbook
 
 ```bash
 # Create a restricted, audited rule for the Ansible python execution engine
-echo 'tanvir ALL=(ALL) NOPASSWD: /usr/bin/python3.14' | sudo tee /etc/sudoers.d/ansible-automation
+echo '<your_username> ALL=(ALL) NOPASSWD: /usr/bin/python3.14' | sudo tee /etc/sudoers.d/ansible-automation
 
 # Enforce read-only permissions on file
 sudo chmod 440 /etc/sudoers.d/ansible-automation
@@ -68,8 +68,18 @@ Create a hosts.ini file in the project root directory to map the server's locati
 
 ---
 
-### 3. Run the Ansible playbook
+### 3. Configure your variables
+Open `vars/config.yml` and set your values before running the playbook:
+
+- 'username' - your server's primary user
+- 'pub_key'  - path to your ssh pub key on the machine (e.g. `~/.ssh/id_ed25519.pub`)
+- `ssh_port` - port for ssh (default `2222` is fine for most setups)
+- mount_ntfs - set to `true` only if you have a NTFS drive to mount, otherwise leave it `false` 
+
+---
+
+### 4. Run the Ansible playbook
 Execute the playbook with the following command:
 ```bash
-ansible-playbook -i hosts.ini playbook.yml --user tanvir --ask-pass
+ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
 ```

@@ -3,11 +3,8 @@
   become: true
   become_method: sudo
 
-  vars:
-    ssh_port: "2222"
-    ntfs_drive_uuid: "01D858C886F164A0"         # your drive UUID
-    ntfs_mount_path: "/mnt/Files"               # your drive path
-    username: "tanvir"                          # your username
+  vars_files:
+    - vars/config.yml
 
   tasks:
   - name: Update apt cache & upgrade all packages
@@ -35,7 +32,7 @@
     ansible.posix.authorized_key:
       user: "{{ username }}"
       state: present
-      key: "{{ lookup('file', '~/.ssh/hp.pub') }}"      # your ssh key
+      key: "{{ lookup('file', pub_key) }}"      # your ssh key
   
   - name: Backup default ssh conf
     ansible.builtin.copy:
@@ -135,12 +132,13 @@
     notify: Restart fail2ban service
     
   # Optional tweaks
-  
+
   - name: Create mount dir for NTFS partition
     ansible.builtin.file:
       path: "{{ ntfs_mount_path }}"
       state: directory
       mode: '0755'
+    when: mount_ntfs
   
   - name: Adding NTFS mount conf to /etc/fstab
     ansible.builtin.mount:
@@ -149,6 +147,7 @@
       fstype: ntfs3
       opts: "defaults,uid=1000,gid=1000,umask=022,nofail,noauto,force,x-systemd.automount"
       state: present
+    when: mount_ntfs
     notify: Reload systemd
 
   - name: Install zram
