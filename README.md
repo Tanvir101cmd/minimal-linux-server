@@ -157,4 +157,6 @@ If the playbook fails mid-run and UFW is left in a broken state, access your ser
 
 The Tailscale installer requires internet access from the target server. If your server is behind a restrictive firewall, allow outbound traffic on port `443` before running.
 
+For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
+
 For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_SETUP.md).
