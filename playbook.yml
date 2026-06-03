@@ -135,18 +135,7 @@
     notify: Restart fail2ban service
     
   # Optional tweaks
-  - name: Configure systemd to ignore laptop lid close
-    ansible.builtin.lineinfile:
-      path: /etc/systemd/logind.conf
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
-      state: present
-    loop:
-      - { regexp: '^#?HandleLidSwitch=', line: 'HandleLidSwitch=ignore' }
-      - { regexp: '^#?HandleLidSwitchExternalPower', line: 'HandleLidSwitchExternalPower=ignore' }
-      - { regexp: '^#?HandleLidSwitchDocked=', line: 'HandleLidSwitchDocked=ignore' }
-    notify: Restart systemd logind service
-
+  
   - name: Create mount dir for NTFS partition
     ansible.builtin.file:
       path: "{{ ntfs_mount_path }}"
