@@ -83,3 +83,18 @@ Execute the playbook with the following command:
 ```bash
 ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
 ```
+
+ Or run specific sections:
+ ``` bash
+ # Security hardening only
+ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags security
+
+# SSH setup only
+ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags ssh
+
+# Zram section only
+ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags zram
+
+# Everything except storage
+ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags storage
+​```

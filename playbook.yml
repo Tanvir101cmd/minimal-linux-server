@@ -12,6 +12,7 @@
       update_cache: true
       upgrade: dist
       cache_valid_time: 3600
+    tags: packages
 
   - name: Install baseline pkgs
     ansible.builtin.apt:
@@ -22,17 +23,20 @@
         - vim
       state: present
       update_cache: true
+    tags: packages
 
   - name: Install OpenSSH
     ansible.builtin.apt:
       name: openssh-server
       state: present
+    tags: packages
 
   - name: Deploy ssh pub key for the user
     ansible.posix.authorized_key:
       user: "{{ username }}"
       state: present
-      key: "{{ lookup('file', pub_key) }}"      # your ssh key
+      key: "{{ lookup('file', pub_key) }}"
+    tags: ssh
   
   - name: Backup default ssh conf
     ansible.builtin.copy:
@@ -40,6 +44,7 @@
       dest: /etc/ssh/sshd_config.backup
       remote_src: true
       force: false
+    tags: ssh
 
   - name: SSH Hardening
     ansible.builtin.lineinfile:
@@ -54,22 +59,26 @@
       - { regexp: '^#?PubkeyAuthentication', line: 'PubkeyAuthentication yes'}
       - { regexp: '^#?KbdInteractiveAuthentication', line: 'KbdInteractiveAuthentication no'}
     notify: Restart ssh service
+    tags: ssh
 
   - name: Remove cloud-init sshd override
     ansible.builtin.file:
       path: /etc/ssh/sshd_config.d/50-cloud-init.conf
       state: absent
     notify: Restart ssh service
+    tags: ssh
 
   - name: Checking if tailscale is installed
     ansible.builtin.command: which tailscale
     register: tailscale_check
     failed_when: false
     changed_when: false
+    tags: security
 
   - name: Download and execute Tailscale installer script
     ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
     when: tailscale_check.rc != 0
+    tags: security
 
   - name: Ensuring tailscale and up and running
     ansible.builtin.systemd:
@@ -77,6 +86,7 @@
       state: started
       enabled: true
     when: lookup('env', 'GITHUB_ACTIONS') != 'true'
+    tags: security
   
   - name: Setting UFW
     community.general.ufw:
@@ -85,6 +95,7 @@
     loop:
       - { direction: 'incoming', policy: 'deny' }
       - { direction: 'outgoing', policy: 'allow' }
+    tags: security
 
   - name: Allow OpenWeb Traffic Ports
     community.general.ufw:
@@ -94,27 +105,32 @@
     loop:
       - '80'
       - '443'
+    tags: security
     
   - name: Allow tailscale interface
     community.general.ufw:
       rule: allow
       interface: tailscale0
       direction: in
+    tags: security
 
   - name: Rate-limit SSH custom port
     community.general.ufw:
       rule: limit
       port: "{{ ssh_port }}"
       proto: tcp
+    tags: security
   
-  - name: Enable firewall
+  - name: Enable ufw
     community.general.ufw:
       state: enabled
+    tags: security
 
   - name: Install fail2ban
     ansible.builtin.apt:
       name: fail2ban
       state: present
+    tags: security
   
   - name: Configure fail2ban
     ansible.builtin.blockinfile:
@@ -130,6 +146,7 @@
         bantime  = 1h
         findtime = 10m
     notify: Restart fail2ban service
+    tags: security
     
   # Optional tweaks
 
@@ -139,6 +156,7 @@
       state: directory
       mode: '0755'
     when: mount_ntfs
+    tags: storage
   
   - name: Adding NTFS mount conf to /etc/fstab
     ansible.builtin.mount:
@@ -149,11 +167,13 @@
       state: present
     when: mount_ntfs
     notify: Reload systemd
+    tags: storage
 
   - name: Install zram
     ansible.builtin.apt:
       name: zram-tools
       state: present
+    tags: zram
   
   - name: Ensuring zram is up and running
     ansible.builtin.systemd:
@@ -161,22 +181,26 @@
       state: started
       enabled: true
     when: lookup('env', 'GITHUB_ACTIONS') != 'true'
+    tags: zram
   
   - name: Disable and remove swap.img
     ansible.builtin.command: swapoff /swap.img
     failed_when: false
     changed_when: false
+    tags: storage
   
   - name: Remove swap.img from fstab
     ansible.builtin.lineinfile:
       path: /etc/fstab
       regexp: '.*swap.img*'
       state: absent
+    tags: storage
   
   - name: Delete swapfile
     ansible.builtin.file:
       path: /swap.img
       state: absent
+    tags: storage
 
   handlers:
     - name: Restart ssh service
