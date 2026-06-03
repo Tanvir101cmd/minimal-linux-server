@@ -36,7 +36,7 @@ jobs:
       - name: Create a mock env
         run: |
           mkdir -p ~/.ssh
-          ssh-keygen -t ed25519 -N ""
+          ssh-keygen -t ed25519 -N "" -q < /dev/null
 
           sudo useradd -m testuser
 
