@@ -1,6 +1,6 @@
-# Server-Setup
+# Ansible-linux-baseline
 
-This guide documents my personal setup process for setting up a baseline for a homelab or remote server, starting from mounting drives to configuring SSH and network protection tools like **fail2ban** and **ufw**.
+A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run it once and the server comes out with SSH locked down, a default deny firewall, brute-force protection, tailscale mesh VPN and zram, a baseline to run anything on it. 
 
 <p align="center">
   <img src="https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white" alt="Ansible">
@@ -8,27 +8,52 @@ This guide documents my personal setup process for setting up a baseline for a h
   <img src="https://img.shields.io/badge/Security-Hardened-brightgreen?style=flat-square&logo=linuxfoundation&logoColor=white" alt="Security Hardened">
   <img src="https://img.shields.io/badge/Tailscale-Integrated-5B49E9?style=flat-square&logo=tailscale&logoColor=white" alt="Tailscale">
   <img src="https://img.shields.io/badge/Firewall-UFW%20%2B%20Fail2Ban-blue?style=flat-square&logo=shautomatik&logoColor=white" alt="Firewall">
+  <img src="https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/test-playbook.yml/badge.svg" alt="CI">
 </p>
 
+## Core Features
+After a successful run the server will have:
 
-## Infrastructure as Code (IaC)
-Automated deployment using Ansible playbook. For step-by-step instructions, please refer to the [Manual Setup](./docs/MANUAL_SETUP.md)
+- SSH restricted to key-based authentication only on port `2222`, root login disabled 
+- UFW enabled with default-deny incoming, and rate limited SSH port
+- Fail2ban automatically banning after 5 failed attemps for 1 hour
+- Tailscale installed and running for remote access
+- Zram swap active, default `swap.img` removed
 
-### Core Features
+## Requirements
 
-| Tool | Purpose |
-|---|---|
-| SSH Hardening | Remote access, key-only auth on port 2222 |
-| ufw | Default-deny firewall, rate-limited SSH |
-| fail2ban | Brute-force ban after 5 attempts |
-| Tailscale | Mesh VPN for remote access without port forwarding |
-| zramswap | Compressed in-memory swap |
+- Server running **Ubuntu 22.04+**
+- A user with `sudo` access on the target server
+- SSH access to the target server from the host machine
+- Ansible installed on **host machine** (the machine you run the playbook from)
+- `ansible.posix` and `community.general` collections
 
+---
+
+## Repository Structure
+```bash
+├── docs
+│   └── MANUAL_SETUP.md
+├── playbook.yml
+├── README.md
+└── roles
+    └── linux_baseline
+        ├── handlers
+        │   └── main.yml
+        ├── tasks
+        │   ├── base.yml
+        │   ├── main.yml
+        │   ├── security.yml
+        │   ├── ssh.yml
+        │   └── system.yml
+        └── vars
+            └── main.yml
+```
+
+## Usage
 
 ### 1. Server Pre-configuration
-When executing the superuser tasks remotely, ansible can hit a 12 second ssh connection timeouts due to Ubuntu's interactive tty env checks. To solve this, one can do passwordless sudo (`NOPASSWD: ALL`). But to maintain industry-grade security, we can instead grant the passwordless privilege explicitly to the system's python interpreter engine that Ansible uses to execute its tasks.
-
-Run the following commands on your target server **before** running the playbook to set up this secure automation profile:
+Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we scope it to only the Python interpreter Ansible uses:
 
 ```bash
 # Create a restricted, audited rule for the standard system Python engine
@@ -40,14 +65,11 @@ sudo chmod 440 /etc/sudoers.d/ansible-automation
 
 ---
 
-### 2. Host Machine Environment Setup
+### 2. Install ansible & collections
 Install Ansible on your host machine:
 ```bash
 # Ubuntu / Debian
-sudo apt update
-sudo apt install software-properties-common -y
-sudo add-apt-repository --yes --update ppa:ansible/ansible
-sudo apt install ansible -y
+sudo apt update && sudo apt install ansible -y
 
 # Fedora / RHEL
 sudo dnf install ansible -y
@@ -55,11 +77,20 @@ sudo dnf install ansible -y
 # Arch Linux
 sudo pacman -S --noconfirm ansible
 
-# macOS (Alternative)
+# macOS
 brew install ansible
 ```
 
-Create a hosts.ini file in the project root directory to map the server's location
+Then install the required collections:
+```bash
+ansible-galaxy collection install ansible.posix community.general
+```
+
+---
+
+### 3. Create inventory file
+
+Create a hosts.ini file in the project root:
 
 ```ini
 [homelab]
@@ -68,30 +99,55 @@ Create a hosts.ini file in the project root directory to map the server's locati
 
 ---
 
-### 3. Configure your variables
-Open `vars/config.yml` and set your values before running the playbook:
+### 4. Configure your variables
+Open `vars/config.yml` and set your values:
 
-- 'username' - your server's primary user
-- 'pub_key'  - path to your ssh pub key on the machine (e.g. `~/.ssh/id_ed25519.pub`)
-- `ssh_port` - port for ssh (default `2222` is fine for most setups)
-- mount_ntfs - set to `true` only if you have a NTFS drive to mount, otherwise leave it `false` 
+```yaml
+username: "your_username"          # Primary user on the server
+pub_key: "~/.ssh/id_ed25519.pub"   # Path to ssh public key
+ssh_port: "2222"                        
+mount_ntfs: false                  # Set to true only if mounting a NTFS drive
+```
 
 ---
 
-### 4. Run the Ansible playbook
+### 5. Run the Ansible playbook
 Execute the playbook with the following command:
 ```bash
 ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
 ```
 
  Or run specific sections:
+
+| Tag      | What it does                   |
+| ----------| --------------------------------|
+| packages | System update + base packages  |
+| ssh      | SSH hardening + key deployment |
+| security | ufw + fail2ban + tailscale     |
+| system   | zram + swapfile removal        |
+
+
  ``` bash
- # Security hardening only
+# Security hardening only
 ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags security
 
 # SSH setup only
 ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags ssh
 
-# Everything except storage
-ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags storage
+# Everything except the system
+ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags system
 ​```
+
+---
+
+## Troubleshooting
+**Playbook hangs at the start**
+This is a TTY timeout issue. Make sure to ran the sudoers pre-configuration step on the target server before running the playbook.
+
+**UFW locked me out of SSH**
+If the playbook fails mid-run and UFW is left in a broken state, access your server via your hosting provider's console and run `sudo ufw disable` to recover access, then re-run the playbook from the beginning.
+
+**Tailscale task fails**
+The Tailscale installer requires internet access from the target server. If your server is behind a restrictive firewall, allow outbound traffic on port `443` before running.
+
+For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_SETUP.md).
