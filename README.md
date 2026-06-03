@@ -127,7 +127,7 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
 | system   | zram + swapfile removal        |
 
 
- ``` bash
+``` bash
 # Security hardening only
 ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags security
 
@@ -136,7 +136,7 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags ssh
 
 # Everything except the system
 ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags system
-​```
+```
 
 ---
 
