@@ -4,19 +4,7 @@
   become_method: ansible.builtin.sudo
 
   vars_files:
-    - vars/config.yml
+    - roles/linux_baseline/vars/main.yml
 
-  tasks:
-
-    - name: Base setup
-      ansible.builtin.import_tasks: tasks/base.yml
-    - name: SSH hardening
-      ansible.builtin.import_tasks: tasks/security.yml
-    - name: Security
-      ansible.builtin.import_tasks: tasks/ssh.yml
-    - name: System related
-      ansible.builtin.import_tasks: tasks/system.yml
-
-  handlers:
-    - name: Load handlers
-      ansible.builtin.import_tasks: handlers/main.yml
+  roles:
+    - role: linux_baseline

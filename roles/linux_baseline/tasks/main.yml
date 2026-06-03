@@ -1,0 +1,15 @@
+- name: Run base configuration
+  ansible.builtin.include_tasks: base.yml
+  tags: always
+
+- name: Apply security baseline
+  ansible.builtin.include_tasks: security.yml
+  tags: security
+
+- name: Apply SSH hardening
+  ansible.builtin.include_tasks: ssh.yml
+  tags: ssh
+
+- name: Run system twaeks
+  ansible.builtin.include_tasks: system.yml
+  tags: system

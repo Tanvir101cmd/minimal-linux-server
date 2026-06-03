@@ -1,6 +1,6 @@
 - name: Checking if tailscale is installed
   ansible.builtin.command: which tailscale
-  register: tailscale_check
+  register: linux_baseline_tailscale_check
   failed_when: false
   changed_when: false
   tags: security
@@ -10,7 +10,7 @@
     url: https://tailscale.com/install.sh
     dest: /tmp/install.sh
     mode: '0755'
-  when: tailscale_check.rc != 0
+  when: linux_baseline_tailscale_check.rc != 0
   tags: security
 
 - name: Ensuring tailscale and up and running
