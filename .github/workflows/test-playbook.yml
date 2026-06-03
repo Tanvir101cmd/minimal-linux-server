@@ -15,8 +15,7 @@ jobs:
 
       - name: Install Ansible
         run: |
-          sudo apt update
-          sudo apt install ansible ansible-lint
+          pip install ansible ansible-lint
           ansible-galaxy collection install ansible.posix community.general
 
       - name: Lint playbook
@@ -31,8 +30,7 @@ jobs:
 
       - name: Install ansible & requirements
         run: |
-          sudo apt update
-          sudo apt install ansible
+          pip install ansible
           ansible-galaxy collection install ansible.posix community.general
 
       - name: Create a mock env
