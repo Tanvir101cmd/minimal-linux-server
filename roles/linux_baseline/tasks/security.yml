@@ -21,6 +21,14 @@
   when: lookup('env', 'GITHUB_ACTIONS') != 'true'
   tags: security
 
+- name: Execute Tailscale installer script
+  ansible.builtin.command: /tmp/install.sh
+  when: linux_baseline_tailscale_check.rc != 0
+  blocks:
+    - name: Run installer
+      ansible.builtin.command: /tmp/install.sh
+  tags: security
+
 - name: Setting UFW
   community.general.ufw:
     direction: "{{ item.direction }}"
