@@ -31,10 +31,10 @@ When executing the superuser tasks remotely, ansible can hit a 12 second ssh con
 Run the following commands on your target server **before** running the playbook to set up this secure automation profile:
 
 ```bash
-# Create a restricted, audited rule for the Ansible python execution engine
-echo '<your_username> ALL=(ALL) NOPASSWD: /usr/bin/python3.14' | sudo tee /etc/sudoers.d/ansible-automation
+# Create a restricted, audited rule for the standard system Python engine
+echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/python3" | sudo tee /etc/sudoers.d/ansible-automation
 
-# Enforce read-only permissions on file
+# Enforce strict read-only permissions on the file
 sudo chmod 440 /etc/sudoers.d/ansible-automation
 ```
 
