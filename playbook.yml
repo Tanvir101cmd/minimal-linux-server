@@ -1,17 +1,22 @@
 - name: Automate minimal + hardened ubuntu server
   hosts: all
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
 
   vars_files:
     - vars/config.yml
 
   tasks:
-    - import_tasks: tasks/base.yml
-    - import_tasks: tasks/security.yml
-    - import_tasks: tasks/ssh.yml
-    - import_tasks: tasks/system.yml
+
+    - name: Base setup
+      ansible.builtin.import_tasks: tasks/base.yml
+    - name: SSH hardening
+      ansible.builtin.import_tasks: tasks/security.yml
+    - name: Security
+      ansible.builtin.import_tasks: tasks/ssh.yml
+    - name: System related
+      ansible.builtin.import_tasks: tasks/system.yml
 
   handlers:
-    - import_tasks: handlers/main.yml
-        
+    - name: Load handlers
+      ansible.builtin.import_tasks: handlers/main.yml

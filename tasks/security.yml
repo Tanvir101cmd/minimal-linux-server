@@ -6,7 +6,10 @@
   tags: security
 
 - name: Download and execute Tailscale installer script
-  ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
+  ansible.builtin.get_url:
+    url: https://tailscale.com/install.sh
+    dest: /tmp/install.sh
+    mode: '0755'
   when: tailscale_check.rc != 0
   tags: security
 
@@ -17,7 +20,7 @@
     enabled: true
   when: lookup('env', 'GITHUB_ACTIONS') != 'true'
   tags: security
-  
+
 - name: Setting UFW
   community.general.ufw:
     direction: "{{ item.direction }}"
@@ -26,6 +29,7 @@
     - { direction: 'incoming', policy: 'deny' }
     - { direction: 'outgoing', policy: 'allow' }
   tags: security
+  # noqa: args[module]
 
 - name: Allow OpenWeb Traffic Ports
   community.general.ufw:
@@ -36,7 +40,7 @@
     - '80'
     - '443'
   tags: security
-    
+
 - name: Allow tailscale interface
   community.general.ufw:
     rule: allow
@@ -50,7 +54,7 @@
     port: "{{ ssh_port }}"
     proto: tcp
   tags: security
-  
+
 - name: Enable ufw
   community.general.ufw:
     state: enabled
@@ -61,11 +65,12 @@
     name: fail2ban
     state: present
   tags: security
-  
+
 - name: Configure fail2ban
   ansible.builtin.blockinfile:
     path: /etc/fail2ban/jail.d/sshd.conf
     create: true
+    mode: '0644'
     block: |
       [sshd]
       enabled  = true

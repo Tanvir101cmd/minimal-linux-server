@@ -4,13 +4,14 @@
     state: present
     key: "{{ lookup('file', pub_key) }}"
   tags: ssh
-  
+
 - name: Backup default ssh conf
   ansible.builtin.copy:
     src: /etc/ssh/sshd_config
     dest: /etc/ssh/sshd_config.backup
     remote_src: true
     force: false
+    mode: '0600'
   tags: ssh
 
 - name: SSH Hardening
