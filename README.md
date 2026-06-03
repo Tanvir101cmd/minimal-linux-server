@@ -100,7 +100,7 @@ Create a hosts.ini file in the project root:
 ---
 
 ### 4. Configure your variables
-Open `vars/config.yml` and set your values:
+Open `roles/linux_baseline/vars/main.yml` and set your values:
 
 ```yaml
 username: "your_username"          # Primary user on the server
