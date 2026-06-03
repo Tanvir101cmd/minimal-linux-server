@@ -5,9 +5,9 @@
 
   vars:
     ssh_port: "2222"
-    ntfs_drive_uuid: "01D858C886F164A0"
-    ntfs_mount_path: "/mnt/Files"
-    username: "tanvir"
+    ntfs_drive_uuid: "01D858C886F164A0"         # your drive UUID
+    ntfs_mount_path: "/mnt/Files"               # your drive path
+    username: "tanvir"                          # your username
 
   tasks:
   - name: Update apt cache & upgrade all packages
@@ -35,7 +35,7 @@
     ansible.posix.authorized_key:
       user: "{{ username }}"
       state: present
-      key: "{{ lookup('file', '~/.ssh/hp.pub') }}"
+      key: "{{ lookup('file', '~/.ssh/hp.pub') }}"      # your ssh key
   
   - name: Backup default ssh conf
     ansible.builtin.copy:
