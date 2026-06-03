@@ -1,0 +1,36 @@
+- name: Deploy ssh pub key for the user
+  ansible.posix.authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ lookup('file', pub_key) }}"
+  tags: ssh
+  
+- name: Backup default ssh conf
+  ansible.builtin.copy:
+    src: /etc/ssh/sshd_config
+    dest: /etc/ssh/sshd_config.backup
+    remote_src: true
+    force: false
+  tags: ssh
+
+- name: SSH Hardening
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - { regexp: '^#?Port', line: 'Port {{ ssh_port }}'}
+    - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no'}
+    - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no'}
+    - { regexp: '^#?PubkeyAuthentication', line: 'PubkeyAuthentication yes'}
+    - { regexp: '^#?KbdInteractiveAuthentication', line: 'KbdInteractiveAuthentication no'}
+  notify: Restart ssh service
+  tags: ssh
+
+- name: Remove cloud-init sshd override
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+    state: absent
+  notify: Restart ssh service
+  tags: ssh

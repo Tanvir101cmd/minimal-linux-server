@@ -1,0 +1,22 @@
+- name: Restart ssh service
+  ansible.builtin.systemd:
+    name: ssh
+    state: restarted
+  failed_when: false
+
+- name: Restart fail2ban service
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: restarted
+  failed_when: false
+
+- name: Restart systemd logind service
+  ansible.builtin.systemd:
+    name: systemd-logind
+    state: restarted
+  failed_when: false
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  failed_when: false

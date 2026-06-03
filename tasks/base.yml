@@ -1,0 +1,23 @@
+- name: Update apt cache & upgrade all packages
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+    cache_valid_time: 3600
+  tags: packages
+
+- name: Install baseline pkgs
+  ansible.builtin.apt:
+    name:
+      - curl
+      - git
+      - btop
+      - vim
+    state: present
+    update_cache: true
+  tags: packages
+
+- name: Install OpenSSH
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+  tags: packages
