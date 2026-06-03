@@ -2,37 +2,66 @@ name: Test Ansible Playbook Execution
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  integration-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Ansible & Requirements
+      - name: Install Ansible
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+          sudo apt update
+          sudo apt install ansible ansible-lint
           ansible-galaxy collection install ansible.posix community.general
 
-      - name: Create Mock Environment Files
+      - name: Lint playbook
+        run: ansible-lint playbook.yml
+
+  dry-run:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install ansible & requirements
         run: |
-          # 1. Create the fake SSH key your lookup command relies on
+          sudo apt update
+          sudo apt install ansible
+          ansible-galaxy collection install ansible.posix community.general
+
+      - name: Create a mock env
+        run: |
           mkdir -p ~/.ssh
-          ssh-keygen -t rsa -b 2048 -f ~/.ssh/hp -N ""
-          
-          # 2. Add the user 'tanvir' so the playbook doesn't fail trying to find it
-          sudo useradd -m tanvir
-          
-          # 3. Create a dummy swap.img file so the deletion tasks don't crash
+          ssh-keygen -t ed25519 -N ""
+
+          sudo useradd -m testuser
+
           sudo dd if=/dev/zero of=/swap.img bs=1M count=10
           sudo mkswap /swap.img
           sudo swapon /swap.img || true
 
-      - name: Run Playbook Dry-Run (Check Mode)
+      - name: Create test vars file
         run: |
-          ansible-playbook playbook.yml -i "localhost," -c local --check --extra-vars "ansible_service_mgr=mock"
+          cat > vars/config.yml << EOF
+          username: "testuser"
+          pub_key: "~/.ssh/id_ed25519.pub"
+          ssh_port: "2222"
+
+          mount_ntfs: false
+          ntfs_drive_uuid: "dummy-uuid"
+          ntfs_mount_path: "/mnt/Files"
+          EOF
+
+      - name: Run playbook in check mode
+        run: |
+          ansible-playbook playbook.yml \
+            -i "localhost," \
+            -c local \
+            --check \
+            -e "GITHUB_ACTIONS=true"

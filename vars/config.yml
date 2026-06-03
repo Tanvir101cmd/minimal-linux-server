@@ -10,5 +10,4 @@ ssh_port: "2222"
 # Optional ntfs drive mounting
 mount_ntfs: false
 ntfs_drive_uuid: "01D858C886F164A0"
-ntfs_mount_path: "/mnt/Files"              
-
+ntfs_mount_path: "/mnt/Files"
