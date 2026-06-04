@@ -3,9 +3,9 @@
 A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run it once and the server comes out with SSH locked down, a default deny firewall, brute-force protection, tailscale mesh VPN and zram, a baseline to run anything on it. 
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white" alt="Ansible">
   <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" alt="Ubuntu">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/Security-Hardened-brightgreen?style=flat-square&logo=linuxfoundation&logoColor=white" alt="Security Hardened">
   <img src="https://img.shields.io/badge/Tailscale-Integrated-5B49E9?style=flat-square&logo=tailscale&logoColor=white" alt="Tailscale">
   <img src="https://img.shields.io/badge/Firewall-UFW%20%2B%20Fail2Ban-blue?style=flat-square&logo=shautomatik&logoColor=white" alt="Firewall">
@@ -23,6 +23,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [4. Configure your variables](#4-configure-your-variables)
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ## Core Features
 After a successful run the server will have:
