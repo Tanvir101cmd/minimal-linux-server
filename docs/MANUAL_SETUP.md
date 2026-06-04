@@ -245,4 +245,15 @@ To start the service simply (if not done already):
 sudo systemctl enable --now zramswap
 ```
 
----
+## Remove swapfile if it exists
+Disable and remove the default swap file if zram is enough for your usecases:
+```bash
+# Disable and remove the default swapfile
+sudo swapoff /swap.img
+
+# Remove it from fstab
+sudo sed -i '/swap.img/d' /etc/fstab
+
+# Delete the file
+sudo rm -f /swap.img
+```
