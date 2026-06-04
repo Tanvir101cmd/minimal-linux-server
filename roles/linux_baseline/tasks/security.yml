@@ -5,7 +5,7 @@
   changed_when: false
   tags: security
 
-- name: Download and execute Tailscale installer script
+- name: Download Tailscale installer script
   ansible.builtin.get_url:
     url: https://tailscale.com/install.sh
     dest: /tmp/install.sh
@@ -24,9 +24,7 @@
 - name: Execute Tailscale installer script
   ansible.builtin.command: /tmp/install.sh
   when: linux_baseline_tailscale_check.rc != 0
-  blocks:
-    - name: Run installer
-      ansible.builtin.command: /tmp/install.sh
+  changed_when: true
   tags: security
 
 - name: Setting UFW
