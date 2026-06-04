@@ -37,7 +37,7 @@ sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
 Edit your SSH daemon config at `/etc/ssh/sshd_config`:
 
 ```ini
-Port 2222
+Port 2222                               # Change this to your prefered port number 
 PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
@@ -185,7 +185,7 @@ Create or edit the jail config at `/etc/fail2ban/jail.d/sshd.conf`:
 ```ini
 [sshd]
 enabled  = true
-port     = 2222
+port     = 2222                         # Must match the Port value set in sshd_config above
 filter   = sshd
 logpath  = /var/log/auth.log
 maxretry = 5
