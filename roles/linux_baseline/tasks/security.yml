@@ -88,3 +88,19 @@
       findtime = 10m
   notify: Restart fail2ban service
   tags: security
+
+- name: Install unattended-upgrades
+  ansible.builtin.apt:
+    name:
+      - unattended-upgrades
+      - apt-listchanges
+    state: present
+  tags: security
+
+- name: Enable automatic security updates
+  ansible.builtin.debconf:
+    name: unattended-upgrades
+    question: unattended-upgrades/enable_auto_updates
+    value: 'true'
+    vtype: boolean
+  tags: security

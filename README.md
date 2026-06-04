@@ -32,6 +32,7 @@ After a successful run the server will have:
 - UFW enabled with default-deny incoming, and rate limited SSH port
 - Fail2ban automatically banning after 5 failed attemps for 24 hour
 - Tailscale installed and running for remote access
+- Automatic security updates applied via unattended-upgrades
 - Zram swap active, default `swap.img` removed
 
 ---
