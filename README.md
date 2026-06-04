@@ -3,6 +3,7 @@
 A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run it once and the server comes out with SSH locked down, a default deny firewall, brute-force protection, tailscale mesh VPN and zram, a baseline to run anything on it. 
 
 <p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white" alt="Ansible">
   <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" alt="Ubuntu">
   <img src="https://img.shields.io/badge/Security-Hardened-brightgreen?style=flat-square&logo=linuxfoundation&logoColor=white" alt="Security Hardened">
@@ -171,3 +172,9 @@ The Tailscale installer requires internet access from the target server. If your
 For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
 
 For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_SETUP.md).
+
+## License
+
+This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for details.
+
+Copyright (c) 2026 [@Tanvir101cmd](https://github.com/Tanvir101cmd)
