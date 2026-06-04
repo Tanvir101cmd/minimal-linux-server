@@ -11,6 +11,18 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   <img src="https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/test-playbook.yml/badge.svg" alt="CI">
 </p>
 
+## Table of Contents
+- [Core Features](#core-features)
+- [Repository Structure](#repository-structure)
+- [Usage](#usage)
+  - [Prerequisites](#prerequisites) 
+  - [1. Server Pre-configuration](#1-server-pre-configuration)
+  - [2. Install ansible and collections](#2-install-ansible-and-collections)
+  - [3. Create inventory file](#3-create-inventory-file)
+  - [4. Configure your variables](#4-configure-your-variables)
+  - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
+- [Troubleshooting](#troubleshooting)
+
 ## Core Features
 After a successful run the server will have:
 
@@ -19,14 +31,6 @@ After a successful run the server will have:
 - Fail2ban automatically banning after 5 failed attemps for 1 hour
 - Tailscale installed and running for remote access
 - Zram swap active, default `swap.img` removed
-
-## Requirements
-
-- Server running **Ubuntu 22.04+**
-- A user with `sudo` access on the target server
-- SSH access to the target server from the host machine
-- Ansible installed on **host machine** (the machine you run the playbook from)
-- `ansible.posix` and `community.general` collections
 
 ---
 
@@ -51,6 +55,13 @@ After a successful run the server will have:
 ```
 
 ## Usage
+### Prerequisites
+
+- Server running **Ubuntu 22.04+**
+- A user with `sudo` access on the target server
+- SSH access to the target server from the host machine
+- Ansible installed on **host machine** (the machine you run the playbook from)
+- `ansible.posix` and `community.general` collections
 
 ### 1. Server Pre-configuration
 Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we scope it to only the Python interpreter Ansible uses:
@@ -65,7 +76,7 @@ sudo chmod 440 /etc/sudoers.d/ansible-automation
 
 ---
 
-### 2. Install ansible & collections
+### 2. Install ansible and collections
 Install Ansible on your host machine:
 ```bash
 # Ubuntu / Debian
