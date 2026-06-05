@@ -11,6 +11,12 @@
     state: present
   tags: lynis
 
+- name: Ensuring auditd is installed
+  ansible.builtin.apt:
+    name: auditd
+    state: present
+  tags: lynis
+
 - name: Configure apt-listchanges for non-interactive automation
   ansible.builtin.debconf:
     name: apt-listchanges
