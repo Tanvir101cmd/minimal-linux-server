@@ -6,6 +6,10 @@
   ansible.builtin.include_tasks: security.yml
   tags: security
 
+- name: Download & Install tailscale
+  ansible.builtin.include_tasks: tailscale.yml
+  tags: tailscale
+
 - name: Apply SSH hardening
   ansible.builtin.include_tasks: ssh.yml
   tags: ssh
