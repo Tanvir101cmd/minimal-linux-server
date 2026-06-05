@@ -197,7 +197,7 @@ port     = 2222                         # Must match the Port value set in sshd_
 filter   = sshd
 logpath  = /var/log/auth.log
 maxretry = 5
-bantime  = 1h
+bantime  = 24h
 findtime = 10m
 ```
 
