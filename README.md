@@ -179,19 +179,19 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags sy
 
 ## Troubleshooting
 
-#### **Playbook hangs at the start**
+### **Playbook hangs at the start**
 
 This is a TTY timeout issue. Make sure to ran the sudoers pre-configuration step on the target server before running the playbook.
 
 ---
 
-#### **UFW locked me out of SSH**
+### **UFW locked me out of SSH**
 
 If the playbook fails mid-run and UFW is left in a broken state, access your server via your hosting provider's console and run `sudo ufw disable` to recover access, then re-run the playbook from the beginning.
 
 ---
 
-#### **Tailscale task fails**
+### **Tailscale task fails**
 
 The Tailscale installer requires internet access from the target server. If your server is behind a restrictive firewall, allow outbound traffic on port `443` before running.
 
