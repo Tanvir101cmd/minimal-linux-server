@@ -49,6 +49,7 @@
     - /usr/bin/make
     - /usr/bin/cc
   register: linux_baseline_compiler_stats
+  tag: lynis
 
 - name: Hardening - Restrict compilers to root user only [BANN-9130]
   ansible.builtin.file:
@@ -58,3 +59,12 @@
     group: root
   loop: "{{ linux_baseline_compiler_stats.results }}"
   when: item.stat.exists
+  tags: lynis
+
+- name: Hardening - Restrict system crontab permission [FILE-7524]
+  ansible.builtin.file:
+    path: /etc/crontab
+    mode: '0600'
+    owner: root
+    group: root
+  tags: lynis
