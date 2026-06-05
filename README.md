@@ -13,6 +13,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
 </p>
 
 ## Table of Contents
+
 - [Core Features](#core-features)
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
@@ -27,10 +28,11 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
 - [License](#license)
 
 ## Core Features
+
 After a successful run the server will have:
 
 - SSH restricted to key-based authentication only on port `2222`, root login disabled 
-- UFW enabled with default-deny incoming, and rate limited SSH port
+- UFW enabled with default-deny incomin, and rate limited SSH port
 - Fail2ban automatically banning after 5 failed attemps for 24 hour
 - Tailscale installed and running for remote access
 - Automatic security updates applied via unattended-upgrades
@@ -39,6 +41,7 @@ After a successful run the server will have:
 ---
 
 ## Repository Structure
+
 ```bash
 ├── CHANGELOG.md
 ├── docs
@@ -63,6 +66,7 @@ After a successful run the server will have:
 ```
 
 ## Usage
+
 ### Prerequisites
 
 - Server running **Ubuntu 22.04+**
@@ -72,19 +76,24 @@ After a successful run the server will have:
 - `ansible.posix` and `community.general` collections
 
 ### 1. Server Pre-configuration
-Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we scope it to only the Python interpreter Ansible uses:
 
-```bash
-# Create a restricted, audited rule for the standard system Python engine
-echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/python3" | sudo tee /etc/sudoers.d/ansible-automation
+Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we can scope it to only the packges/tools Ansible uses in the playbook (e.g. apt, cp, mkdir etc) and increase the sudo timeout from 15m to 60m so that the playbook doesn't lose its escalated privilege mid-way in its execution:
 
-# Enforce strict read-only permissions on the file
-sudo chmod 440 /etc/sudoers.d/ansible-automation
+Create a sudoers file in /etc/sudoers.d/
+
+``` bash 
+sudo visudo -f /etc/sudoers.d/your_username-ansible
+```
+
+```ini
+Defaults:your_username timestamp_timeout=60
+your_username ALL=(ALL) NOPASSWD: /bin/sh, /usr/bin/apt-get, /usr/bin/apt, /usr/bin/systemctl, /usr/bin/ufw, /usr/bin/tee, /usr/bin/chmod, /usr/bin/chown, /usr/bin/cp, /usr/bin/mkdir, /usr/bin/python3, /usr/bin/python3.14
 ```
 
 ---
 
 ### 2. Install ansible and collections
+
 Install Ansible on your host machine:
 ```bash
 # Ubuntu / Debian
@@ -101,15 +110,18 @@ brew install ansible
 ```
 
 Then install the required collections:
+
 ```bash
 ansible-galaxy collection install ansible.posix community.general
 ```
 
 ---
 
-### 3. Create inventory file
+### 3. Create inventory & ansible.cfg file
 
 Create a hosts.ini file in the project root:
+
+`hosts.ini`
 
 ```ini
 [homelab]
@@ -119,21 +131,26 @@ Create a hosts.ini file in the project root:
 ---
 
 ### 4. Configure your variables
+
 Open `roles/linux_baseline/vars/main.yml` and set your values:
 
 ```yaml
-username: "your_username"          # Primary user on the server
-pub_key: "~/.ssh/id_ed25519.pub"   # Path to ssh public key
-ssh_port: "2222"                        
-mount_ntfs: false                  # Set to true only if mounting a NTFS drive
+linux_baseline_username: "your_username"             # Primary user on the server
+linux_baseline_pub_key: "~/.ssh/id_ed25519.pub"      # Path to ssh public key
+linux_baseline_ssh_port: "2222"                      # Set your custom ssh port   
+linux_baseline_mount_ntfs: false                     # Set to true only if mounting a NTFS drive
+linux_baseline_ntfs_drive_uuid: "XXXXXXXXXXXXXXXX"   # Set to your drive_uuid, check via lsblk -f
+linux_baseline_ntfs_mount_path: "/mnt/XXX"           # Set the mount path
 ```
 
 ---
 
 ### 5. Run the Ansible playbook
+
 Execute the playbook with the following command:
+
 ```bash
-ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
+ansible-playbook -i hosts.ini playbook.yml --user <your_username>
 ```
 
  Or run specific sections:
@@ -146,7 +163,6 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
 | tailscale | Mesh VPN service               |
 | lynis     | Lynis audit suggestions        |
 | system    | zram + swapfile removal        |
-
 
 ``` bash
 # Security hardening only
@@ -162,19 +178,20 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags sy
 ---
 
 ## Troubleshooting
-**Playbook hangs at the start**
+
+#### **Playbook hangs at the start**
 
 This is a TTY timeout issue. Make sure to ran the sudoers pre-configuration step on the target server before running the playbook.
 
 ---
 
-**UFW locked me out of SSH**
+#### **UFW locked me out of SSH**
 
 If the playbook fails mid-run and UFW is left in a broken state, access your server via your hosting provider's console and run `sudo ufw disable` to recover access, then re-run the playbook from the beginning.
 
 ---
 
-**Tailscale task fails**
+#### **Tailscale task fails**
 
 The Tailscale installer requires internet access from the target server. If your server is behind a restrictive firewall, allow outbound traffic on port `443` before running.
 
