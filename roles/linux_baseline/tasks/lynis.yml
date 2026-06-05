@@ -9,7 +9,7 @@
   ansible.builtin.apt:
     name: apt-listchanges
     state: present
-    tags: lynis
+  tags: lynis
 
 - name: Configure apt-listchanges for non-interactive automation
   ansible.builtin.debconf:
