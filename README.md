@@ -175,6 +175,14 @@ For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
 
 For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_SETUP.md).
 
+---
+
+## References and Acknowledgments
+[Lynis by Cisofy](https://github.com/cisofy/lynis) - The open-source security auditing tool to benchmark and guide these hardening configurations.
+[Linux Audit Blog](https://linux-audit.com) - A valuable resource website for in-depth technical guide for standard Linux system hardening practices.  
+
+---
+
 ## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for details.
