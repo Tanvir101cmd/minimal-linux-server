@@ -5,6 +5,10 @@
     cache_valid_time: 3600
   tags: packages
 
+- name: Ensure system timezone is set to Asia/Dhaka
+  community.general.timezone:
+    name: Asia/Dhaka
+
 - name: Install baseline pkgs
   ansible.builtin.apt:
     name:
