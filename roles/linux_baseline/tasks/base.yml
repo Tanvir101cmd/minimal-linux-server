@@ -4,10 +4,6 @@
     upgrade: dist
     cache_valid_time: 3600
 
-- name: Ensure system timezone is set to Asia/Dhaka
-  community.general.timezone:
-    name: "{{ timezone }}"
-
 - name: Install baseline pkgs
   ansible.builtin.apt:
     name:
