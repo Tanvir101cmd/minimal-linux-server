@@ -7,7 +7,7 @@
 
 - name: Ensure system timezone is set to Asia/Dhaka
   community.general.timezone:
-    name: Asia/Dhaka
+    name: {{ timezone }}
 
 - name: Install baseline pkgs
   ansible.builtin.apt:

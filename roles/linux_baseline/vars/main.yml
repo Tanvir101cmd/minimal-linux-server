@@ -7,6 +7,9 @@ linux_baseline_pub_key: "~/.ssh/hp.pub"
 # Port for ssh
 linux_baseline_ssh_port: "2222"
 
+# Your timezone
+linux_baseline_timezone: "Asia/Dhaka"
+
 # Optional ntfs drive mounting
 linux_baseline_mount_ntfs: false
 linux_baseline_ntfs_drive_uuid: "01D858C886F164A0"
