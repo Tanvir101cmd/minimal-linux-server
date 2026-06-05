@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-06-05
+
+### Added
+- **Security:** Added Lynis hardening tasks and configurations.
+- **Security:** Hardened SSH configuration per Lynis auditing guidelines `[SSH-7408]`.
+- **Security:** Enabled `unattended-upgrades` for automatic background security patches.
+- **Fail2ban:** Added manual installation step via `apt` in CI pipeline.
+- **Fail2ban:** Ensured the service is fully installed before configuration tasks run.
+
+### Changed
+- **Structure:** Separated Tailscale tasks out of `security.yml` into its own dedicated scope.
+- **Fail2ban:** Updated default `bantime` to 24 hours.
+- **Documentation:** Added hardened SSH configuration details to the manual.
+- **Documentation:** Documented the updated 24h Fail2ban ban time in the manual.
+
+### Fixed
+- Fixed incorrect variable names.
+- Fixed YAML indentation and quotation issues across tasks.
+- Fixed a minor formatting issue in the documentation references.
+- *Reverted an experimental indentation fix on tags.*
+
+### Removed
+- Removed the timezone configuration section entirely from the main task runner.
+
 ## 2026-06-04
 
 ### Added
