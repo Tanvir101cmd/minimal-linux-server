@@ -1,8 +1,8 @@
 - name: Deploy ssh pub key for the user
   ansible.posix.authorized_key:
-    user: "{{ username }}"
+    user: "{{ linux_baseline_username }}"
     state: present
-    key: "{{ lookup('file', pub_key) }}"
+    key: "{{ lookup('file', linux_baseline_pub_key) }}"
   tags: ssh
 
 - name: Backup default ssh conf
@@ -21,7 +21,7 @@
     line: "{{ item.line }}"
     state: present
   loop:
-    - { regexp: '^#?Port', line: 'Port {{ ssh_port }}'}
+    - { regexp: '^#?Port', line: 'Port {{ linux_baseline_ssh_port }}'}
     - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no'}
     - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no'}
     - { regexp: '^#?PubkeyAuthentication', line: 'PubkeyAuthentication yes'}

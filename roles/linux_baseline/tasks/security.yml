@@ -28,7 +28,7 @@
 - name: Rate-limit SSH custom port
   community.general.ufw:
     rule: limit
-    port: "{{ ssh_port }}"
+    port: "{{ linux_baseline_ssh_port }}"
     proto: tcp
   tags: security
 
@@ -51,7 +51,7 @@
     block: |
       [sshd]
       enabled  = true
-      port     = {{ ssh_port }}
+      port     = {{ linux_baseline_ssh_port }}
       filter   = sshd
       logpath  = /var/log/auth.log
       maxretry = 5
