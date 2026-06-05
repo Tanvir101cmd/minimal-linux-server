@@ -19,7 +19,7 @@
     vtype: select
   tags: lynis
 
-- name: Ensure Fail2ban is installed
+- name: Ensuring Fail2ban is installed
   ansible.builtin.package:
     name: fail2ban
     state: present
