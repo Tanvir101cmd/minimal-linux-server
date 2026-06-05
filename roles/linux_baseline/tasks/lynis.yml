@@ -49,7 +49,7 @@
     - /usr/bin/make
     - /usr/bin/cc
   register: linux_baseline_compiler_stats
-  tag: lynis
+  tags: lynis
 
 - name: Restrict compilers to root user only [BANN-9130]
   ansible.builtin.file:
