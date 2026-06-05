@@ -19,6 +19,12 @@
     vtype: select
   tags: lynis
 
+- name: Ensure Fail2ban is installed
+  ansible.builtin.package:
+    name: fail2ban
+    state: present
+  tags: lynis
+
 - name: Copy Fail2ban jail.conf to jail.local to protect configuration override
   ansible.builtin.copy:
     src: /etc/fail2ban/jail.conf
