@@ -42,6 +42,14 @@ PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
 KbdInteractiveAuthentication no
+AllowTcpForwarding no
+ClientAliveCountMax 2
+LogLevel VERBOSE
+MaxAuthTries 3
+MaxSessions 2
+TCPKeepAlive no
+X11Forwarding no
+AllowAgentForwarding no
 ```
 
 Reload the config file via:
