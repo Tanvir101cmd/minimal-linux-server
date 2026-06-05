@@ -23,6 +23,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [4. Configure your variables](#4-configure-your-variables)
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
+- [References and Acknowledgments](#references-and-acknowledgments)
 - [License](#license)
 
 ## Core Features
@@ -179,6 +180,7 @@ For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_
 
 ## References and Acknowledgments
 [Lynis by Cisofy](https://github.com/cisofy/lynis) - The open-source security auditing tool to benchmark and guide these hardening configurations.
+
 [Linux Audit Blog](https://linux-audit.com) - A valuable resource website for in-depth technical guide for standard Linux system hardening practices.  
 
 ---
