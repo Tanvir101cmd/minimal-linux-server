@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-04
+
+### Added
+- **Documentation:** Added a Table of Contents (ToC) to the main manual for better navigation.
+- **Documentation:** Added a dedicated License section and project banner.
+- **Documentation:** Added steps for safely removing `swap.img` when setting up `zram`.
+
+### Changed
+- **Documentation:** Rearranged manual sections for improved readability and logical flow.
+- **Documentation:** Clarified that the SSH port is fully configurable rather than being hardcoded.
+- **Legal:** Updated the copyright owner details in the `LICENSE` file.
+
+### Fixed
+- **Tailscale:** Resolved conflicting action statements within the Tailscale installer task.
+- **Ansible:** Added the missing command task required to properly execute `/tmp/install.sh`.
+
 ## 2026-06-03
 ### Added
 - `roles/linux_baseline/vars/main.yml` for user-configurable values (username, SSH key path, SSH port, NTFS options)
