@@ -40,8 +40,10 @@ After a successful run the server will have:
 
 ## Repository Structure
 ```bash
+├── CHANGELOG.md
 ├── docs
 │   └── MANUAL_SETUP.md
+├── LICENSE
 ├── playbook.yml
 ├── README.md
 └── roles
@@ -50,10 +52,12 @@ After a successful run the server will have:
         │   └── main.yml
         ├── tasks
         │   ├── base.yml
+        │   ├── lynis.yml
         │   ├── main.yml
         │   ├── security.yml
         │   ├── ssh.yml
-        │   └── system.yml
+        │   ├── system.yml
+        │   └── tailscale.yml
         └── vars
             └── main.yml
 ```
@@ -134,12 +138,14 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --ask-pass
 
  Or run specific sections:
 
-| Tag      | What it does                   |
-| ----------| --------------------------------|
-| packages | System update + base packages  |
-| ssh      | SSH hardening + key deployment |
-| security | ufw + fail2ban + tailscale     |
-| system   | zram + swapfile removal        |
+| Tag       | What it does                   |
+| -----------| --------------------------------|
+| packages  | System update + base packages  |
+| ssh       | SSH hardening + key deployment |
+| security  | ufw + fail2ban                 |
+| tailscale | Mesh VPN service               |
+| lynis     | Lynis audit suggestions        |
+| system    | zram + swapfile removal        |
 
 
 ``` bash

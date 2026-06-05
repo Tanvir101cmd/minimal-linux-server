@@ -17,3 +17,7 @@
 - name: Run system twaeks
   ansible.builtin.include_tasks: system.yml
   tags: system
+
+- name: Apply Lynis patches
+  ansible.builtin.include_tasks: lynis.yml
+  tags: lynis
