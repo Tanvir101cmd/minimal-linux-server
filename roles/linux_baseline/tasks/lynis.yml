@@ -39,3 +39,22 @@
     force: false
     mode: '0644'
   tags: lynis
+
+- name: Check which compilers exist
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - /usr/bin/gcc
+    - /usr/bin/g++
+    - /usr/bin/make
+    - /usr/bin/cc
+  register: linux_baseline_compiler_stats
+
+- name: Hardening - Restrict compilers to root user only [BANN-9130]
+  ansible.builtin.file:
+    path: "{{ item.item }}"
+    mode: '0700'
+    owner: root
+    group: root
+  loop: "{{ linux_baseline_compiler_stats.results }}"
+  when: item.stat.exists
