@@ -1,11 +1,11 @@
-- name: Ensuring libpam-tmpdir is installed for PAM session isolation
+- name: Ensuring libpam-tmpdir is installed for PAM session isolation [AUTH-9262]
   ansible.builtin.apt:
     name: libpam-tmpdir
     state: present
     update_cache: true
   tags: lynis
 
-- name: Ensuring apt-listchanges is installed for change tracking
+- name: Ensuring apt-listchanges is installed for change tracking [PKGS-7388]
   ansible.builtin.apt:
     name: apt-listchanges
     state: present
@@ -31,7 +31,7 @@
     state: present
   tags: lynis
 
-- name: Copy Fail2ban jail.conf to jail.local to protect configuration override
+- name: Copy Fail2ban jail.conf to jail.local to protect configuration override [TOOL-5102]
   ansible.builtin.copy:
     src: /etc/fail2ban/jail.conf
     dest: /etc/fail2ban/jail.local
