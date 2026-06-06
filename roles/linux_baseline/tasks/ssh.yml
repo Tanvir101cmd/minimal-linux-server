@@ -15,6 +15,32 @@
     mode: "0600"
   tags: ssh
 
+- name: Find authorized_keys file in home dir
+  ansible.builtin.find:
+    paths: /home
+    patterns: "authorized_keys"
+    recurse: true
+    file_type: file
+  register: linux_baseline_found_authorized_keys
+  tags: ssh
+
+- name: Find authorized_keys file in root dir
+  ansible.builtin.stat:
+    path: /root/.ssh/.authorized_keys
+  register: linux_baseline_root_authorized_keys
+  tags: ssh
+
+- name: Set ssh_pubkeys present fact
+  ansible.builtin.set_fact:
+    linux_baseline_ssh_pubkeys_present: >-
+      {{
+        (linux_baseline_found_authorized_keys.files | length > 0)
+        or
+        (linux_baseline_root_authorized_keys.stat.exists
+        and linux_baseline_root_authorized_keys.stat.size | int > 0)
+      }}
+  tags: ssh
+
 - name: SSH Hardening
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -24,8 +50,6 @@
   loop:
     - { regexp: "^#?Port", line: "Port {{ linux_baseline_ssh_port }}" }
     - { regexp: "^#?PermitRootLogin", line: "PermitRootLogin no" }
-    - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
-    - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication yes" }
     - { regexp: "^#?KbdInteractiveAuthentication", line: "KbdInteractiveAuthentication no" }
     - { regexp: "^#?AllowTcpForwarding", line: "AllowTcpForwarding no" }
     - { regexp: "^#?ClientAliveCountMax", line: "ClientAliveCountMax 2" }
@@ -35,6 +59,19 @@
     - { regexp: "^#?TCPKeepAlive", line: "TCPKeepAlive no" }
     - { regexp: "^#?X11Forwarding", line: "X11Forwarding no" }
     - { regexp: "^#?AllowAgentForwarding", line: "AllowAgentForwarding no" }
+  notify: Restart ssh service
+  tags: ssh
+
+- name: Enable PubkeyAuth (only if keys are present)
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication yes" }
+  when: linux_baseline_ssh_pubkeys_present
   notify: Restart ssh service
   tags: ssh
 
