@@ -1,10 +1,11 @@
+---
 - name: Setting UFW
   community.general.ufw:
     direction: "{{ item.direction }}"
     policy: "{{ item.policy }}"
   loop:
-    - { direction: 'incoming', policy: 'deny' }
-    - { direction: 'outgoing', policy: 'allow' }
+    - { direction: "incoming", policy: "deny" }
+    - { direction: "outgoing", policy: "allow" }
   tags: security
   # noqa: args[module]
 
@@ -14,8 +15,8 @@
     port: "{{ item }}"
     proto: tcp
   loop:
-    - '80'
-    - '443'
+    - "80"
+    - "443"
   tags: security
 
 - name: Allow tailscale interface
@@ -47,7 +48,7 @@
   ansible.builtin.blockinfile:
     path: /etc/fail2ban/jail.d/sshd.conf
     create: true
-    mode: '0644'
+    mode: "0644"
     block: |
       [sshd]
       enabled  = true
@@ -72,6 +73,6 @@
   ansible.builtin.debconf:
     name: unattended-upgrades
     question: unattended-upgrades/enable_auto_updates
-    value: 'true'
+    value: "true"
     vtype: boolean
   tags: security

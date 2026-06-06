@@ -1,3 +1,4 @@
+---
 - name: Run base configuration
   ansible.builtin.include_tasks: base.yml
   tags: always

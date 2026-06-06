@@ -1,3 +1,4 @@
+---
 - name: Install zram
   ansible.builtin.apt:
     name: zram-tools
@@ -21,7 +22,7 @@
 - name: Remove swap.img from fstab
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    regexp: '.*swap.img*'
+    regexp: ".*swap.img*"
     state: absent
   tags: system
 

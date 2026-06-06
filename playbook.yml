@@ -1,3 +1,4 @@
+---
 - name: Automate minimal + hardened ubuntu server
   hosts: all
   become: true
