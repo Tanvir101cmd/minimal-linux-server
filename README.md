@@ -31,7 +31,7 @@ After a successful run the server will have:
 
 - SSH restricted to key-based authentication only on port `2222`, root login disabled 
 - UFW enabled with default-deny incomin, and rate limited SSH port
-- Fail2ban automatically banning after 5 failed attemps for 24 hour
+- Fail2ban automatically banning after 5 failed attempts for 24 hour
 - Tailscale installed and running for remote access
 - Automatic security updates applied via unattended-upgrades
 - Zram swap active, default `swap.img` removed
