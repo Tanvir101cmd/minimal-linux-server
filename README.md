@@ -79,11 +79,9 @@ After a successful run the server will have:
 
 Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we can scope it to only the packges/tools Ansible uses in the playbook (e.g. apt, cp, mkdir etc) and increase the sudo timeout from 15m to 60m so that the playbook doesn't lose its escalated privilege mid-way in its execution:
 
-Create a sudoers file in /etc/sudoers.d/
+#### Make sure to always use visudo to create files inside `/etc/sudoers.d/`. 
 
-``` bash 
-sudo visudo -f /etc/sudoers.d/your_username-ansible
-```
+#### For this case, type: `sudo visudo -f /etc/sudoers.d/your_username-ansible` in the terminal and paste the below ruleset:
 
 ```ini
 Defaults:your_username timestamp_timeout=60
