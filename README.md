@@ -2,15 +2,13 @@
 
 A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run it once and the server comes out with SSH locked down, a default deny firewall, brute-force protection, tailscale mesh VPN and zram, creating a baseline to run anything on it. 
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white" alt="Ansible">
-  <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" alt="Ubuntu">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/Security-Hardened-brightgreen?style=flat-square&logo=linuxfoundation&logoColor=white" alt="Security Hardened">
-  <img src="https://img.shields.io/badge/Tailscale-Integrated-5B49E9?style=flat-square&logo=tailscale&logoColor=white" alt="Tailscale">
-  <img src="https://img.shields.io/badge/Firewall-UFW%20%2B%20Fail2Ban-blue?style=flat-square&logo=shautomatik&logoColor=white" alt="Firewall">
-  <img src="https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/test-playbook.yml/badge.svg" alt="CI">
-</p>
+![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![Security Hardened](https://img.shields.io/badge/Security-Hardened-brightgreen?style=flat-square&logo=linuxfoundation&logoColor=white)
+![Tailscale](https://img.shields.io/badge/Tailscale-Integrated-5B49E9?style=flat-square&logo=tailscale&logoColor=white)
+![Firewall](https://img.shields.io/badge/Firewall-UFW%20%2B%20Fail2Ban-blue?style=flat-square&logo=shautomatik&logoColor=white)
+![CI](https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/test-playbook.yml/badge.svg)
 
 ## Table of Contents
 
@@ -79,7 +77,7 @@ After a successful run the server will have:
 
 Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we can scope it to only the packges/tools Ansible uses in the playbook (e.g. apt, cp, mkdir etc) and increase the sudo timeout from 15m to 60m so that the playbook doesn't lose its escalated privilege mid-way in its execution:
 
-#### Make sure to always use visudo to create files inside `/etc/sudoers.d/`. 
+#### Make sure to always use visudo to create files inside `/etc/sudoers.d/`
 
 #### For this case, type: `sudo visudo -f /etc/sudoers.d/your_username-ansible` in the terminal and paste the below ruleset:
 
@@ -93,6 +91,7 @@ your_username ALL=(ALL) NOPASSWD: /bin/sh, /usr/bin/apt-get, /usr/bin/apt, /usr/
 ### 2. Install ansible and collections
 
 Install Ansible on your host machine:
+
 ```bash
 # Ubuntu / Debian
 sudo apt update && sudo apt install ansible -y
