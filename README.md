@@ -20,7 +20,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [Prerequisites](#prerequisites) 
   - [1. Server Pre-configuration](#1-server-pre-configuration)
   - [2. Install ansible and collections](#2-install-ansible-and-collections)
-  - [3. Create inventory file](#3-create-inventory-file)
+  - [3. Create inventory and ansible.cfg file](#3-create-inventory-and-ansiblecfg-file)
   - [4. Configure your variables](#4-configure-your-variables)
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
@@ -115,7 +115,7 @@ ansible-galaxy collection install ansible.posix community.general
 
 ---
 
-### 3. Create inventory & ansible.cfg file
+### 3. Create inventory and ansible.cfg file
 
 Create a hosts.ini file in the project root:
 
