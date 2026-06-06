@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-06
+
+### Features
+
+- **auditd:** Added auditd for kernel-level security logging
+- **cron:** Restricted system crontab permissions [FILE-7524]
+- **compilers:** Restricted access to compilers [BANN-9130]
+
+### Fixes
+
+- **ssh:** Conditionally apply public key and password authentication hardening — skips PubkeyAuthentication and PasswordAuthentication changes when no authorized_keys are found on the host, preventing accidental lockout
+- **sudo:** Scoped NOPASSWD to Ansible commands only
+- **ci:** Fixed incorrect variable names
+
+### Removed
+
+- Restrict-compilers-to-root-only mode
+
+### Chores
+
+- Updated Lynis tasks with their respective Test IDs
+- Fixed ansible-lint warnings (resolved via ansible-lint --fix)
+
+### Documentation
+
+- Converted banners to pure Markdown
+- Fixed broken Table of Contents link
+- Formatted the #Troubleshooting section
+- Fixed minor heading formats for better visual hierarchy
+- Added minor separator
+- Fixed small typo in playbook
+- Fixed multiple minor typos
+
 ## 2026-06-05
 
 ### Added
