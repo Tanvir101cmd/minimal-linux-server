@@ -1,6 +1,6 @@
 # Ansible-linux-baseline
 
-A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run it once and the server comes out with SSH locked down, a default deny firewall, brute-force protection, tailscale mesh VPN and zram, creating a baseline to run anything on it. 
+A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run it once and the server comes out with SSH locked down, a default deny firewall, brute-force protection, tailscale mesh VPN and zram, creating a baseline to run anything on it.
 
 ![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white)
@@ -18,7 +18,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [Prerequisites](#prerequisites) 
   - [1. Server Pre-configuration](#1-server-pre-configuration)
   - [2. Install ansible and collections](#2-install-ansible-and-collections)
-  - [3. Create inventory and ansible.cfg file](#3-create-inventory-and-ansiblecfg-file)
+  - [3. Create inventory and ansible.cfg file](#3-create-inventory-file)
   - [4. Configure your variables](#4-configure-your-variables)
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
@@ -30,7 +30,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
 
 After a successful run the server will have:
 
-- SSH restricted to key-based authentication only on port `2222`, root login disabled 
+- SSH restricted to key-based authentication only on port `2222`, root login disabled
 - UFW enabled with default-deny incoming, and rate limited SSH port
 - Fail2ban automatically banning after 5 failed attempts for 24 hour
 - Tailscale installed and running for remote access
@@ -115,7 +115,7 @@ ansible-galaxy collection install ansible.posix community.general
 
 ---
 
-### 3. Create inventory and ansible.cfg file
+### 3. Create inventory file
 
 Create a hosts.ini file in the project root:
 
@@ -123,7 +123,7 @@ Create a hosts.ini file in the project root:
 
 ```ini
 [homelab]
-192.168.0.150 ansible_port=22
+192.168.0.150 ansible_port=22                        # Change ssh_port starting from second run
 ```
 
 ---
