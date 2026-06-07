@@ -38,7 +38,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N "" -q < /dev/null
 
-          sudo apt update && sudo apt install fail2ban
+          sudo apt update && sudo apt install fail2ban -y
 
           sudo useradd -m testuser
 
