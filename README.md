@@ -22,8 +22,8 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [4. Configure your variables](#4-configure-your-variables)
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
-- [References and Acknowledgments](#references-and-acknowledgments)
 - [Roadmap](#roadmap)
+- [References and Acknowledgments](#references-and-acknowledgments)
 - [License](#license)
 
 ## Core Features
