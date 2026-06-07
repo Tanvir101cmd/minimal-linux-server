@@ -207,9 +207,56 @@ sudo systemctl restart fail2ban
 ```
 ---
 
-# Optional tweaks
+## Lynis Recommended Kernel Parameters
 
-## Mounting NTFS Drives on Boot
+**Use with proper research** as it can conflict with your hardware. 
+
+To apply those kernel parameters:
+
+``` bash
+sudo nano /etc/sysctl.d/99-custom.conf
+```
+
+Paste the parameters:
+
+```ini
+# --- Network: IPv4 ---
+net.ipv4.tcp_syncookies = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.default.log_martians = 1
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+# --- Network: IPv6 ---
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0
+
+# --- Kernel ---
+kernel.randomize_va_space = 2
+kernel.sysrq = 0
+kernel.core_uses_pid = 1
+kernel.dmesg_restrict = 1
+kernel.kptr_restrict = 2
+kernel.yama.ptrace_scope = 1
+
+# --- Filesystem ---
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+fs.suid_dumpable = 0
+```
+
+---
+
+## Optional tweaks
+
+### Mounting NTFS Drives on Boot
 
 I have some NTFS drives that I keep my backups on. 
 
