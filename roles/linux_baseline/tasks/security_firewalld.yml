@@ -1,0 +1,48 @@
+---
+- name: Install EPEL repo (Required for fail2ban on RHEL)
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install firewalld
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Start and enable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Allow HTTP/HTTPS
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - http
+    - https
+
+- name: Allow Tailscale
+  ansible.posix.firewalld:
+    zone: trusted
+    interface: tailscale0
+    permanent: true
+    state: enabled
+
+- name: Rate limit SSH
+  ansible.posix.firewalld:
+    rich_rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="{{ linux_baseline_ssh_port }}" protocol="tcp" limit value="5/m" accept'
+    permanent: true
+    state: enabled
+
+- name: Configure automatic updates (RedHat)
+  when: ansible_os_family == "RedHat"
+  block:
+    - name: Enable dnf-automatic timer
+      ansible.builtin.systemd:
+        name: dnf-automatic-install.timer
+        state: started
+        enabled: true

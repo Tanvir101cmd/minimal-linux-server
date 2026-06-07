@@ -1,0 +1,72 @@
+---
+- name: Setting UFW
+  community.general.ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  loop:
+    - { direction: "incoming", policy: "deny" }
+    - { direction: "outgoing", policy: "allow" }
+  tags: security
+  # noqa: args[module]
+
+- name: Allow OpenWeb Traffic Ports
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "80"
+    - "443"
+  tags: security
+
+- name: Allow tailscale interface
+  community.general.ufw:
+    rule: allow
+    interface: tailscale0
+    direction: in
+  tags: security
+
+- name: Rate-limit SSH custom port
+  community.general.ufw:
+    rule: limit
+    port: "{{ linux_baseline_ssh_port }}"
+    proto: tcp
+  tags: security
+
+- name: Enable ufw
+  community.general.ufw:
+    state: enabled
+  tags: security
+
+- name: Install fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+  tags: security
+
+- name: Configure fail2ban
+  ansible.builtin.blockinfile:
+    path: /etc/fail2ban/jail.d/sshd.conf
+    create: true
+    mode: "0644"
+    block: |
+      [sshd]
+      enabled  = true
+      port     = {{ linux_baseline_ssh_port }}
+      filter   = sshd
+      logpath  = /var/log/auth.log
+      maxretry = 5
+      bantime  = 24h
+      findtime = 10m
+  notify: Restart fail2ban service
+  tags: security
+
+- name: Configure automatic updates (Debian)
+  when: ansible_os_family == "Debian"
+  block:
+    - name: Enable automatic security updates
+      ansible.builtin.debconf:
+        name: unattended-upgrades
+        question: unattended-upgrades/enable_auto_updates
+        value: "true"
+        vtype: boolean
