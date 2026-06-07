@@ -13,3 +13,4 @@ linux_baseline_zram_service: zramswap
 linux_baseline_firewall_package: ufw
 linux_baseline_admin_group: sudo
 linux_baseline_auth_log: /var/log/auth.log
+linux_baseline_audit_package: auditd

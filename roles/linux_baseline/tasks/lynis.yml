@@ -6,18 +6,19 @@
     name: libpam-tmpdir
     state: present
     update_cache: true
+  when: ansible_facts['os_family'] == "Debian"
   tags: lynis
 
 - name: Ensuring apt-listchanges is installed for change tracking [PKGS-7388]
   ansible.builtin.apt:
     name: apt-listchanges
     state: present
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
   tags: lynis
 
 - name: Ensuring auditd is installed
   ansible.builtin.package:
-    name: "{{ baseline_audit_package }}"
+    name: "{{ linux_baseline_audit_package }}"
     state: present
   tags: lynis
 
@@ -27,7 +28,7 @@
     question: apt-listchanges/confirm
     value: "false"
     vtype: select
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
   tags: lynis
 
 # ==================
