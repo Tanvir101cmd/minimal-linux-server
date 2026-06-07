@@ -23,6 +23,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
 - [References and Acknowledgments](#references-and-acknowledgments)
+- [Roadmap](#roadmap)
 - [License](#license)
 
 ## Core Features
@@ -192,9 +193,18 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags sy
 
 ---
 
-### For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
-
 ### For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_SETUP.md).
+
+---
+
+## Roadmap
+
+- [ ] NTP hardening
+- [ ] SSH banner / MOTD
+- [ ] Molecule tests for playbook validation
+- [ ] Distro-agnostic support (Debian, Rocky Linux)
+
+### For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 
