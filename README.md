@@ -191,8 +191,6 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags sy
 
   The Tailscale installer requires internet access from the target server. If your server is behind a restrictive firewall, allow outbound traffic on port `443` before running.
 
----
-
 ### For manual step-by-step setup without Ansible, see [Manual Setup](./docs/MANUAL_SETUP.md).
 
 ---
