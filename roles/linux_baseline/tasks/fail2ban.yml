@@ -1,6 +1,6 @@
 ---
 - name: Install fail2ban
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: fail2ban
     state: present
   tags: security
@@ -15,7 +15,7 @@
       enabled  = true
       port     = {{ linux_baseline_ssh_port }}
       filter   = sshd
-      logpath  = /var/log/auth.log
+      logpath  = {{ linux_baseline_auth_log }}
       maxretry = 5
       bantime  = 24h
       findtime = 10m
