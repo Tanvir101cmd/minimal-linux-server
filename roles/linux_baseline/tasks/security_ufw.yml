@@ -38,29 +38,6 @@
     state: enabled
   tags: security
 
-- name: Install fail2ban
-  ansible.builtin.apt:
-    name: fail2ban
-    state: present
-  tags: security
-
-- name: Configure fail2ban
-  ansible.builtin.blockinfile:
-    path: /etc/fail2ban/jail.d/sshd.conf
-    create: true
-    mode: "0644"
-    block: |
-      [sshd]
-      enabled  = true
-      port     = {{ linux_baseline_ssh_port }}
-      filter   = sshd
-      logpath  = /var/log/auth.log
-      maxretry = 5
-      bantime  = 24h
-      findtime = 10m
-  notify: Restart fail2ban service
-  tags: security
-
 - name: Configure automatic updates (Debian)
   when: ansible_facts['os_family'] == "Debian"
   block:

@@ -1,7 +1,7 @@
 ---
 - name: Restart ssh service
   ansible.builtin.systemd:
-    name: ssh
+    name: "{% if ansible_facts['os_family'] == 'Debian' %}ssh{% else %}sshd{% endif %}"
     state: restarted
   failed_when: false
 
@@ -11,10 +11,9 @@
     state: restarted
   failed_when: false
 
-- name: Restart systemd logind service
-  ansible.builtin.systemd:
-    name: systemd-logind
-    state: restarted
+- name: Reload firewalld
+  ansible.posix.firewalld:
+    state: reloaded
   failed_when: false
 
 - name: Reload systemd
