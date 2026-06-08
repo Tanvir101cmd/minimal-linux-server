@@ -1,43 +1,79 @@
-# Manual Ubuntu server hardening setup
+# Manual Linux Server Hardening Setup
 
-> **Note:** The document contains manual step-by-step references for configuring the server. For automated, production-grade deployment using Ansible, please refer to the main [README.md](../README.md) 
+> For automated deployment, see [README.md](../README.md).
 
 ---
 
-## First make sure the system is up to date
+## Table of Contents
+
+- [1. System Update](#1-system-update)
+- [2. Install Baseline Packages](#2-install-baseline-packages)
+- [3. SSH](3-ssh)
+- [4. SSH Keys (Client Side)](#4-ssh-keys-client-side)
+- [5. Firewall](5-firewall)
+  - [UFW - Ubuntu/Debian]((#ufw-debianubuntu))
+  - [Firewalld - Rocky/AlmaLinux](#firewalld-rockyalmalinux)
+- [6. Fail2ban](#6-fail2ban)
+- [7. Automatic Security Updates](#7-automatic-security-updates)
+- [8. Tailscale](#8-tailscale)
+- [9. Lynis Recommended Kernel Hardening Parameters](#9-lynis-recommended-kernel-hardening-parameters)
+- [10. Optional: zram Swap](#10-optional-zram-swap)
+- [11. Optional: Mount NTFS Drive on Boot](#11-optional-mount-ntfs-drive-on-boot)
+
+---
+
+## 1. System Update
+
 ```bash
+# Debian/Ubuntu
 sudo apt update && sudo apt upgrade -y
+
+# Rocky/AlmaLinux
+sudo dnf update -y
 ```
 
-Note: Some updates may require a reboot after completion.
+> Some updates require a reboot.
 
-## Starting with SSH
+---
 
-All you need is a base system and **OpenSSH** to start.  
-Remember, SSH follows a **server–client model**.
-
-### Installation
+## 2. Install Baseline Packages
 
 ```bash
-sudo apt install openssh-server
+# Debian/Ubuntu
+sudo apt install -y curl git vim openssh-server ufw fail2ban \
+  unattended-upgrades apt-listchanges auditd
+
+# Rocky/AlmaLinux
+sudo dnf install -y curl git vim openssh-server firewalld fail2ban \
+  dnf-automatic audit
 ```
 
-### Starting the SSH Service:
+---
+
+## 3. SSH
+
+### Start the service
+
 ```bash
+# Debian/Ubuntu
 sudo systemctl enable --now ssh
+
+# Rocky/AlmaLinux
+sudo systemctl enable --now sshd
 ```
 
-### Hardening SSH Configuration
+### Harden `/etc/ssh/sshd_config`
 
-It's a good idea to backup the default config file before making any changes, make the backup in this case by:
+Back up the default config first:
+
 ```bash
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
 ```
 
-Edit your SSH daemon config at `/etc/ssh/sshd_config`:
+Apply these settings:
 
 ```ini
-Port 2222                               # Change this to your prefered port number 
+Port 2222
 PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
@@ -52,148 +88,90 @@ X11Forwarding no
 AllowAgentForwarding no
 ```
 
-Reload the config file via:
+Restart to apply:
+
 ```bash
+# Debian/Ubuntu
 sudo systemctl restart ssh
+
+# Rocky/AlmaLinux
+sudo systemctl restart sshd
 ```
 
 ---
 
-## Setting Up SSH Keys (Client-Side)
+## 4. SSH Keys (Client Side)
 
-SSH keys are the backbone of secure connections.  
-It’s good practice to use **unique keys for different servers,** like using different keys for different doors.
+Generate a key, then copy it to the server:
 
-### Generate a new SSH key
 ```bash
 ssh-keygen -f ~/.ssh/filename -C "comment"
+ssh-copy-id -i ~/.ssh/filename.pub -p 2222 username@<IP>
 ```
-Sometimes users run into “UNPROTECTED PRIVATE KEY FILE” errors. You can simply fix it by:
+
+> If you get "UNPROTECTED PRIVATE KEY FILE": `chmod 600 ~/.ssh/filename`
+
+Connect:
+
 ```bash
-chmod 600 ~/.ssh/filename
+ssh -p 2222 username@<IP>
 ```
 
-### Find Server IP (run this on the server)
-```bash
-ip addr show
-```
-
-### Copy your public key to the server
-```bash
-ssh-copy-id -i ~/.ssh/filename -p 2222 username@<IP_ADDRESS_or_HOSTNAME>
-```
-
-### Connect to the server
-```bash
-ssh -p 2222 username@<IP_ADDRESS_or_HOSTNAME>
-```
-
-### Simplify with SSH Config
-
-You can make connections effortless by creating a config file at `~/.ssh/config`:
+Simplify repeat connections with `~/.ssh/config`:
 
 ```ini
 Host servername
-    HostName <IP_ADDRESS_or_HOSTNAME>
+    HostName <IP>
     IdentityFile ~/.ssh/filename
-    User Username
+    User username
     Port 2222
 ```
 
 ---
 
-## Tailscale (To access from anywhere)
+## 5. Firewall
 
-**Tailscale** is a mesh VPN that makes your SSH server accessible **from anywhere with internet**.  
-It assigns private static IPs to devices, allowing secure and direct communication without port forwarding.
-
-First, install tailscale by: 
-```bash
-curl -fsSL https://tailscale.com/install.sh | sh
-```
-
-Enable Tailscale on boot:
-```bash
-sudo systemctl enable --now tailscaled
-```
-
-To get private static ip with tailscale:
-```bash
-sudo tailscale up
-```
-It will show or open a link in your browser. Go there and sign in with your account to get the private IP. Connect your other devices with the same account to establish connection between devices securely.
-
-To get tailscale ip:
-```bash
-tailscale ip
-```
-
-Another thing about tailscale is that Tailscale security keys (Node Keys) for user-authenticated devices expire by default, typically after 180 days. So it will disconnect automatically from your unattended server.
-
-To prevent lockouts:
-
-- Log into the [Tailscale Admin Console](https://login.tailscale.com/admin/machines) on your local machine.
-
-- Navigate to the Machines tab.
-
-- Find your newly connected server.
-
-- Click on your server and select Disable Key Expiry.
-
-If your key does expire, you must use a non-Tailscale connection (like a local LAN IP) to run 
-```sudo tailscale up --force-reauth ``` and re-authenticate.
-
----
-
-
-## UFW (Uncomplicated Firewall)
-
-Start with a safe default configuration:
+### UFW (Debian/Ubuntu)
 
 ```bash
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
-```
-
-Then allow essential ports:
-
-```bash
-sudo ufw allow 80/tcp      # HTTP traffic
-sudo ufw allow 443/tcp     # HTTPS traffic
-sudo ufw limit 2222/tcp    # Rate-limits connections to port 2222, good to prevent bruteforce attacks
-sudo ufw allow in on tailscale0 # Allows Tailscale traffic on the server
-```
-
-Enable UFW:
-```bash
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw limit 2222/tcp
+sudo ufw allow in on tailscale0
 sudo ufw enable
+sudo ufw status verbose
 ```
 
-To verify UFW status and active rules:
+### firewalld (Rocky/AlmaLinux)
+
 ```bash
-sudo ufw status verbose
+sudo systemctl enable --now firewalld
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --permanent --add-port=2222/tcp
+sudo firewall-cmd --permanent --zone=trusted --add-interface=tailscale0
+sudo firewall-cmd --permanent --remove-service=ssh
+sudo firewall-cmd --reload
 ```
 
 ---
 
-## fail2ban (Brute Force Protection)
+## 6. Fail2ban
 
-To install:
-```bash
-sudo apt install fail2ban
-```
+Enable and configure for SSH:
 
-Start the service by:
 ```bash
 sudo systemctl enable --now fail2ban
 ```
 
-Create or edit the jail config at `/etc/fail2ban/jail.d/sshd.conf`:
+Create `/etc/fail2ban/jail.d/sshd.conf`:
 
 ```ini
 [sshd]
 enabled  = true
-port     = 2222                         # Must match the Port value set in sshd_config above
+port     = 2222
 filter   = sshd
 logpath  = /var/log/auth.log
 maxretry = 5
@@ -201,26 +179,52 @@ bantime  = 24h
 findtime = 10m
 ```
 
-After editing, restart the fail2ban service to reload the config file:
 ```bash
 sudo systemctl restart fail2ban
 ```
+
 ---
 
-## Lynis Recommended Kernel Parameters
+## 7. Automatic Security Updates
 
-**Use with proper research** as it can conflict with your hardware. 
+```bash
+# Debian/Ubuntu - enable via debconf
+sudo dpkg-reconfigure -plow unattended-upgrades
 
-To apply those kernel parameters:
+# Rocky/AlmaLinux - security updates only
+sudo sed -i 's/^upgrade_type.*/upgrade_type = security/' /etc/dnf/automatic.conf
+sudo systemctl enable --now dnf-automatic.timer
+```
 
-``` bash
+---
+
+## 8. Tailscale
+
+```bash
+# Both families - official install script handles distro detection
+curl -fsSL https://tailscale.com/install.sh | sh
+
+sudo systemctl enable --now tailscaled
+sudo tailscale up        # opens auth link in browser
+tailscale ip             # get your private Tailscale IP
+```
+
+> **Key expiry:** Tailscale node keys expire after 180 days by default, which will lock you out of an unattended server. Go to the [Admin Console](https://login.tailscale.com/admin/machines) -> your machine -> **Disable Key Expiry**.
+>
+> If your key does expire, reconnect via LAN and run `sudo tailscale up --force-reauth`.
+
+---
+
+## 9. Lynis Recommended Kernel Hardening Parameters
+
+> **Proceed with caution** - some parameters may conflict with specific hardware.
+
+```bash
 sudo nano /etc/sysctl.d/99-custom.conf
 ```
 
-Paste the parameters:
-
 ```ini
-# --- Network: IPv4 ---
+# Network: IPv4
 net.ipv4.tcp_syncookies = 1
 net.ipv4.conf.all.rp_filter = 1
 net.ipv4.conf.default.rp_filter = 1
@@ -234,11 +238,11 @@ net.ipv4.conf.all.log_martians = 1
 net.ipv4.conf.default.log_martians = 1
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 
-# --- Network: IPv6 ---
+# Network: IPv6
 net.ipv6.conf.all.accept_redirects = 0
 net.ipv6.conf.default.accept_redirects = 0
 
-# --- Kernel ---
+# Kernel
 kernel.randomize_va_space = 2
 kernel.sysrq = 0
 kernel.core_uses_pid = 1
@@ -246,69 +250,63 @@ kernel.dmesg_restrict = 1
 kernel.kptr_restrict = 2
 kernel.yama.ptrace_scope = 1
 
-# --- Filesystem ---
+# Filesystem
 fs.protected_hardlinks = 1
 fs.protected_symlinks = 1
 fs.suid_dumpable = 0
 ```
 
----
+Apply immediately:
 
-## Optional tweaks
-
-### Mounting NTFS Drives on Boot
-
-I have some NTFS drives that I keep my backups on. 
-
-First make a empty directory that will be used to mount the NTFS drive
 ```bash
-sudo mkdir -p /mnt/Files
+sudo sysctl --system
 ```
 
-Add this line to your `/etc/fstab` to automatically mount your NTFS drive at boot (make sure the UUID is correct)
+---
+
+## 10. Optional: zram Swap
+
+Compressed in-RAM swap - faster than disk, no HDD/SSD wear.
+
 ```bash
+# Debian/Ubuntu
+sudo apt install -y zram-tools
+sudo systemctl enable --now zramswap
+
+# Rocky/AlmaLinux
+sudo dnf install -y zram-generator
+# Create /etc/systemd/zram-generator.conf:
+echo -e "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd" \
+  | sudo tee /etc/systemd/zram-generator.conf
+sudo systemctl daemon-reload
+sudo systemctl enable --now systemd-zram-setup@zram0.service
+```
+
+Remove the legacy swap file if no longer needed:
+
+```bash
+sudo swapoff /swap.img
+sudo sed -i '/swap\.img/d' /etc/fstab
+sudo rm -f /swap.img
+```
+
+---
+
+## 11. Optional: Mount NTFS Drive on Boot
+
+```bash
+sudo mkdir -p /mnt/Files
+lsblk -f                  # find your drive's UUID
+```
+
+Add to `/etc/fstab` (replace UUID with yours):
+
+```
 UUID=01D858C886F164A0 /mnt/Files ntfs3 defaults,uid=1000,gid=1000,umask=022,nofail,noauto,force,x-systemd.automount 0 0
 ```
 
-To see the partition UUID:
-``` bash
-lsblk -f
-```
-
-Reload the new fstab by:
-``` bash
+```bash
 sudo systemctl daemon-reload
 ```
 
-You might need run the below command to make sure the drive is 'clean':
-```bash
-sudo ntfsfix -d /dev/sdxx
-```
-
----
-
-## Configure Zram
-Zram creates compressed swap space in RAM instead of using slow disk storage. It's much faster than traditional swap and doesn't use your SSD/HDD.
-
-To install zram:
-```bash
-sudo apt install zram-tools
-```
-
-To start the service simply (if not done already):
-```bash
-sudo systemctl enable --now zramswap
-```
-
-## Remove swapfile if it exists
-Disable and remove the default swap file if zram is enough for your usecases:
-```bash
-# Disable and remove the default swapfile
-sudo swapoff /swap.img
-
-# Remove it from fstab
-sudo sed -i '/swap.img/d' /etc/fstab
-
-# Delete the file
-sudo rm -f /swap.img
-```
+> If the mount fails, the drive may need to be marked clean first: `sudo ntfsfix -d /dev/sdXX`

@@ -1,5 +1,5 @@
 ---
-- name: Automate minimal + hardened ubuntu server
+- name: Automate minimal + hardened ubuntu/rocky server
   hosts: all
   become: true
   become_method: ansible.builtin.sudo
