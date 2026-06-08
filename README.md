@@ -75,7 +75,7 @@ After a successful run the server will have:
 
 ### Prerequisites
 
-- Server running **Ubuntu 22.04+**
+- Server running **Ubuntu 22.04+ or Rocky Linux 8+**
 - A user with `sudo` access on the target server
 - SSH access to the target server from the host machine
 - Ansible installed on **host machine** (the machine you run the playbook from)
