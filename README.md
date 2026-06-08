@@ -42,9 +42,11 @@ After a successful run the server will have:
 ## Repository Structure
 
 ```bash
+├── ansible.cfg
 ├── CHANGELOG.md
 ├── docs
 │   └── MANUAL_SETUP.md
+├── hosts.ini
 ├── LICENSE
 ├── playbook.yml
 ├── README.md
@@ -54,14 +56,19 @@ After a successful run the server will have:
         │   └── main.yml
         ├── tasks
         │   ├── base.yml
+        │   ├── fail2ban.yml
         │   ├── lynis.yml
         │   ├── main.yml
+        │   ├── security_firewalld.yml
+        │   ├── security_ufw.yml
         │   ├── security.yml
         │   ├── ssh.yml
         │   ├── system.yml
         │   └── tailscale.yml
         └── vars
-            └── main.yml
+            ├── debian.yml
+            ├── main.yml
+            └── redhat.yml
 ```
 
 ## Usage
@@ -135,10 +142,7 @@ Open `roles/linux_baseline/vars/main.yml` and set your values:
 ```yaml
 linux_baseline_username: "your_username"             # Primary user on the server
 linux_baseline_pub_key: "~/.ssh/id_ed25519.pub"      # Path to ssh public key
-linux_baseline_ssh_port: "2222"                      # Set your custom ssh port   
-linux_baseline_mount_ntfs: false                     # Set to true only if mounting a NTFS drive
-linux_baseline_ntfs_drive_uuid: "XXXXXXXXXXXXXXXX"   # Set to your drive_uuid, check via lsblk -f
-linux_baseline_ntfs_mount_path: "/mnt/XXX"           # Set the mount path
+linux_baseline_ssh_port: "2222"                      # Set your custom ssh port
 ```
 
 ---
