@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Use lowercase filter for os-specific variable loading ([e6b54b9](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/e6b54b9))
 
 ### Documentation
+- Fix critical sudoers security flaw and harden ssh setup in readme ([f67f5fe](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f67f5fe))
 - Marked molecule tests and distro-agnostic support as done ([273e0ee](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/273e0ee))
 - Marked molecule tests and distro-agnostic support as done ([f6b6386](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f6b6386))
 
