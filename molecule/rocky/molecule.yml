@@ -27,7 +27,6 @@ provisioner:
     group_vars:
       all:
         linux_baseline_pub_key: ""
-        linux_baseline_ssh_pubkeys_present: true
 
 verifier:
   name: ansible

@@ -1,3 +1,4 @@
+---
 linux_baseline_packages:
   - curl
   - git
