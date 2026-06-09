@@ -3,7 +3,6 @@
   ansible.builtin.systemd:
     name: "{% if ansible_facts['os_family'] == 'Debian' %}ssh{% else %}sshd{% endif %}"
     state: restarted
-  failed_when: false
 
 - name: Restart fail2ban service
   ansible.builtin.systemd:
