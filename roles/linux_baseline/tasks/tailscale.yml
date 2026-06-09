@@ -40,7 +40,7 @@
   changed_when: true
   register: linux_baseline_tailscale_install
   failed_when:
-    - tailscale_install.rc != 0
+    - linux_baseline_tailscale_install.rc != 0
     - "'already installed' not in linux_baseline_tailscale_install.stdout"
   tags: tailscale
 
@@ -56,6 +56,6 @@
 
 - name: Tailscale skipped in CI env
   ansible.builtin.debug:
-    mgs: "Tailscale installation skipped in Github CI"
-  when: lookup('env', 'GITHUB_ACTIONS') != 'true'
+    msg: "Tailscale installation skipped in Github CI"
+  when: lookup('env', 'GITHUB_ACTIONS') == 'true'
   tags: tailscale
