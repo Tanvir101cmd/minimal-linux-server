@@ -17,7 +17,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
   - [Prerequisites](#prerequisites) 
-  - [1. Server Pre-configuration](#1-server-pre-configuration)
+  - [1. Server Pre-configuration](#1-server-pre-configuration-zero-window-security)
   - [2. Install ansible and collections](#2-install-ansible-and-collections)
   - [3. Create inventory file](#3-create-inventory-file)
   - [4. Configure your variables](#4-configure-your-variables)
