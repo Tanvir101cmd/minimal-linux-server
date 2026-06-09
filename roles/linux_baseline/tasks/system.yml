@@ -1,22 +1,29 @@
 ---
 - name: Install zram
-  ansible.builtin.apt:
-    name: zram-tools
+  ansible.builtin.package:
+    name: "{{ linux_baseline_zram_package }}"
     state: present
+  tags: system
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
   tags: system
 
 - name: Ensuring zram is up and running
   ansible.builtin.systemd:
-    name: zramswap
+    name: "{{ linux_baseline_zram_service }}"
     state: started
     enabled: true
   when: lookup('env', 'GITHUB_ACTIONS') != 'true'
+  failed_when: false
   tags: system
 
 - name: Disable and remove swap.img
   ansible.builtin.command: swapoff /swap.img
   failed_when: false
   changed_when: false
+  when: ansible_facts['os_family'] == "Debian"
   tags: system
 
 - name: Remove swap.img from fstab
@@ -24,10 +31,12 @@
     path: /etc/fstab
     regexp: ".*swap.img*"
     state: absent
+  when: ansible_facts['os_family'] == "Debian"
   tags: system
 
 - name: Delete swapfile
   ansible.builtin.file:
     path: /swap.img
     state: absent
+  when: ansible_facts['os_family'] == "Debian"
   tags: system

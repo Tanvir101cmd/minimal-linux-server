@@ -1,10 +1,18 @@
 ---
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_facts['os_family'] | lower }}.yml"
+  tags: always
+
 - name: Run base configuration
   ansible.builtin.include_tasks: base.yml
   tags: always
 
-- name: Apply security baseline
+- name: Apply security baseline (depending on distro)
   ansible.builtin.include_tasks: security.yml
+  tags: security
+
+- name: Install and configure fail2ban
+  ansible.builtin.include_tasks: fail2ban.yml
   tags: security
 
 - name: Download & Install tailscale
@@ -15,7 +23,7 @@
   ansible.builtin.include_tasks: ssh.yml
   tags: ssh
 
-- name: Run system twaeks
+- name: Run system tweaks
   ansible.builtin.include_tasks: system.yml
   tags: system
 

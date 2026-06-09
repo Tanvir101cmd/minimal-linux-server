@@ -1,20 +1,24 @@
----
+# =======================
+# DEBIAN-SPECIFIC TASKS
+# =======================
 - name: Ensuring libpam-tmpdir is installed for PAM session isolation [AUTH-9262]
   ansible.builtin.apt:
     name: libpam-tmpdir
     state: present
     update_cache: true
+  when: ansible_facts['os_family'] == "Debian"
   tags: lynis
 
 - name: Ensuring apt-listchanges is installed for change tracking [PKGS-7388]
   ansible.builtin.apt:
     name: apt-listchanges
     state: present
+  when: ansible_facts['os_family'] == "Debian"
   tags: lynis
 
 - name: Ensuring auditd is installed
-  ansible.builtin.apt:
-    name: auditd
+  ansible.builtin.package:
+    name: "{{ linux_baseline_audit_package }}"
     state: present
   tags: lynis
 
@@ -24,7 +28,12 @@
     question: apt-listchanges/confirm
     value: "false"
     vtype: select
+  when: ansible_facts['os_family'] == "Debian"
   tags: lynis
+
+# ==================
+# UNIVERSAL TASKS
+# ==================
 
 - name: Ensuring Fail2ban is installed
   ansible.builtin.package:
@@ -48,6 +57,10 @@
     owner: root
     group: root
   tags: lynis
+
+# ==================
+# KERNEL PARAMETERS
+# ==================
 
 - name: Applying kernel parameters
   ansible.posix.sysctl:
