@@ -1,11 +1,12 @@
 name: Update Changelog Daily
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'CHANGELOG.md'
+  schedule:
+    # Runs every single day at 18:00 UTC (12:00 AM Midnight local time)
+    - cron: '0 18 * * *'
+  
+  # Allows you to trigger this manually from the GitHub Actions tab whenever you want
+  workflow_dispatch:
 
 permissions:
   contents: write
