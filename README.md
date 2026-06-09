@@ -190,7 +190,7 @@ Create a hosts.ini file in the project root:
 
 ```ini
 [homelab]
-192.168.0.150 ansible_port=22                        # Change ssh_port starting from second run
+192.168.0.150 ansible_port=22 ansible_user=your_username ansible_ssh_private_key_file=~/.ssh/id_ed25519
 ```
 
 ---
@@ -212,7 +212,7 @@ linux_baseline_ssh_port: "2222"                      # Set your custom ssh port
 Execute the playbook with the following command:
 
 ```bash
-ansible-playbook -i hosts.ini playbook.yml --user <your_username>
+ansible-playbook -i hosts.ini playbook.yml
 ```
 
  Or run specific sections:
@@ -228,13 +228,13 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username>
 
 ``` bash
 # Security hardening only
-ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags security
+ansible-playbook -i hosts.ini playbook.yml --tags security
 
 # SSH setup only
-ansible-playbook -i hosts.ini playbook.yml --user <your_username> --tags ssh
+ansible-playbook -i hosts.ini playbook.yml --tags ssh
 
 # Everything except the system
-ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags system
+ansible-playbook -i hosts.ini playbook.yml --skip-tags system
 ```
 
 ---
