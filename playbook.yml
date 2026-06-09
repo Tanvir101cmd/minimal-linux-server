@@ -4,8 +4,5 @@
   become: true
   become_method: ansible.builtin.sudo
 
-  vars_files:
-    - roles/linux_baseline/vars/main.yml
-
   roles:
     - role: linux_baseline
