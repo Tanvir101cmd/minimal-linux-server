@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 ## 2026-06-09
 
 ### Features
+- ***(ci)*** Automate changelog generation ([09b75eb](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/09b75eb))
 - Add molecule test scenarios for ubuntu and rocky linux ([685bcc2](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/685bcc2))
 - Added molecule tests for ubuntu and rocky linux with github actions ci ([0dd7f0e](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/0dd7f0e))
 
 ### Bug Fixes
+- 403 error on generating changelog and pushing it ([3eb1479](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/3eb1479))
 - Trailing spaces ([5590d1b](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/5590d1b))
 - Skip tailscale installation in ci environments ([0fa239a](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/0fa239a))
 - Add error handling to tailscale installer task ([06c37cf](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/06c37cf))
