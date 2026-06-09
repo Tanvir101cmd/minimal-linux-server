@@ -7,7 +7,7 @@
   changed_when: false
   tags: tailscale
 
-# 2. RedHat: Install via native package manager (Since it's in the DNF repo!)
+# 2. RedHat: Install via native package manager (Since it's in the rocky dnf repo!)
 - name: Install Tailscale via package manager (RedHat)
   ansible.builtin.package:
     name: tailscale
@@ -15,9 +15,10 @@
   when:
     - ansible_facts['os_family'] == "RedHat"
     - linux_baseline_tailscale_check.rc != 0
+    - lookup('env', 'GITHUB_ACTIONS') != 'true'
   tags: tailscale
 
-# 3. Debian: Download and run script (Since it's not in default APT repos)
+# 3. Debian: Download and run script (Since it's not in default apt repos)
 - name: Download Tailscale installer script (Debian)
   ansible.builtin.get_url:
     url: https://tailscale.com/install.sh
@@ -26,6 +27,7 @@
   when:
     - ansible_facts['os_family'] == "Debian"
     - linux_baseline_tailscale_check.rc != 0
+    - lookup('env', 'GITHUB_ACTIONS') != 'true'
   register: linux_baseline_tailscale_download
   tags: tailscale
 
@@ -34,6 +36,7 @@
   when:
     - ansible_facts['os_family'] == "Debian"
     - linux_baseline_tailscale_check.rc != 0
+    - lookup('env', 'GITHUB_ACTIONS') != 'true'
   changed_when: true
   register: linux_baseline_tailscale_install
   failed_when:
@@ -47,5 +50,12 @@
     name: tailscaled
     state: started
     enabled: true
-  when: linux_baseline_tailscale_check.rc == 0 or linux_baseline_tailscale_install is changed
+  when: lookup('env', 'GITHUB_ACTIONS') != 'true'
+  failed_when: false
+  tags: tailscale
+
+- name: Tailscale skipped in CI env
+  ansible.builtin.debug:
+    mgs: "Tailscale installation skipped in Github CI"
+  when: lookup('env', 'GITHUB_ACTIONS') != 'true'
   tags: tailscale
