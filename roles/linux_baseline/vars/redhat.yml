@@ -5,13 +5,15 @@ linux_baseline_packages:
   - openssh-server
   - fail2ban
   - dnf-automatic
-  - "{{ linux_baseline_firewall_package }}"
+  - firewalld
 
 linux_baseline_zram_package:
   - zram-generator
   - zram-generator-defaults
+
 linux_baseline_zram_service: systemd-zram-setup@.service
 linux_baseline_firewall_package: firewalld
 linux_baseline_admin_group: wheel
 linux_baseline_auth_log: /var/log/secure
 linux_baseline_audit_package: audit
+linux_baseline_ssh_service: sshd

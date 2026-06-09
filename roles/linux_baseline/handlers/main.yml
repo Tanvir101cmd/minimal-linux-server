@@ -1,7 +1,7 @@
 ---
 - name: Restart ssh service
   ansible.builtin.systemd:
-    name: "{% if ansible_facts['os_family'] == 'Debian' %}ssh{% else %}sshd{% endif %}"
+    name: "{{ linux_baseline_ssh_service }}"
     state: restarted
 
 - name: Restart fail2ban service
