@@ -201,10 +201,10 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags sy
 
 ## Roadmap
 
+- [x] Molecule tests for playbook validation
+- [x] Distro-agnostic support (Debian, Rocky Linux)
 - [ ] NTP hardening
 - [ ] SSH banner / MOTD
-- [ ] Molecule tests for playbook validation
-- [ ] Distro-agnostic support (Debian, Rocky Linux)
 
 ### For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
 
