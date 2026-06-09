@@ -1,5 +1,5 @@
 ---
-- name: Verify Ubuntu
+- name: Verify Rocky Linux
   hosts: all
   become: true
   tasks:
@@ -7,10 +7,10 @@
       ansible.builtin.package_facts:
         manager: auto
 
-    - name: Assert UFW is installed
+    - name: Assert firewalld is installed
       ansible.builtin.assert:
-        that: "'ufw' in ansible_facts.packages"
-        fail_msg: "UFW is not installed"
+        that: "'firewalld' in ansible_facts.packages"
+        fail_msg: "firewalld is not installed"
 
     - name: Assert fail2ban is installed
       ansible.builtin.assert:
