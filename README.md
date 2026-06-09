@@ -9,6 +9,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
 ![Tailscale](https://img.shields.io/badge/Tailscale-Integrated-5B49E9?style=flat-square&logo=tailscale&logoColor=white)
 ![Firewall](https://img.shields.io/badge/Firewall-UFW%20%2B%20Fail2Ban-blue?style=flat-square&logo=shautomatik&logoColor=white)
 ![CI](https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/test-playbook.yml/badge.svg)
+![CI](https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/molecule.yml/badge.svg)
 
 ## Table of Contents
 
@@ -75,7 +76,7 @@ After a successful run the server will have:
 
 ### Prerequisites
 
-- Server running **Ubuntu 22.04+ or Rocky Linux 8+**
+- Server running **Ubuntu 22.04+ or Rocky Linux 10+**
 - A user with `sudo` access on the target server
 - SSH access to the target server from the host machine
 - Ansible installed on **host machine** (the machine you run the playbook from)
@@ -199,12 +200,28 @@ ansible-playbook -i hosts.ini playbook.yml --user <your_username> --skip-tags sy
 
 ---
 
+## Testing
+
+This playbook is tested using [Molecule](https://ansible.readthedocs.io/projects/molecule/) with podman as the container driver. Tests run automatically on every push via GitHub Actions.
+
+[![Molecule CI](https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/molecule.yml/badge.svg)](https://github.com/Tanvir101cmd/ansible-linux-baseline/actions/workflows/molecule.yml)
+
+### Test matrix
+
+| Distro         | Status |
+| ----------------| --------|
+| Ubuntu 22.04   | ✅      |
+| Rocky Linux 10 | ✅      |
+
+
+---
+
 ## Roadmap
 
 - [ ] NTP hardening
 - [ ] SSH banner / MOTD
-- [ ] Molecule tests for playbook validation
-- [ ] Distro-agnostic support (Debian, Rocky Linux)
+- [x] Molecule tests for playbook validation
+- [x] Distro-agnostic support (Debian, Rocky Linux)
 
 ### For a full list of changes, see [CHANGELOG.md](./CHANGELOG.md).
 
