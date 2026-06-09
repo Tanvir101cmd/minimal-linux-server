@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 ## 2026-06-09
 
 ### Features
+- Make public web ports optional and disabled by default ([1239dae](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/1239dae))
 - ***(ci)*** Automate changelog generation ([09b75eb](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/09b75eb))
 - Add molecule test scenarios for ubuntu and rocky linux ([685bcc2](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/685bcc2))
 - Added molecule tests for ubuntu and rocky linux with github actions ci ([0dd7f0e](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/0dd7f0e))
 
 ### Bug Fixes
+- ***(tailscale,vars)*** Correct registration typo, fix debug logic & update default vars ([685954f](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/685954f))
+- ***(handlers)*** Correct module and state for firewalld reload task ([f6c2f4d](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f6c2f4d))
+- ***(base)*** Resolve ansible-lint package-latest violation for redhat upgrades ([7bff31c](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/7bff31c))
 - 403 error on generating changelog and pushing it ([3eb1479](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/3eb1479))
 - Trailing spaces ([5590d1b](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/5590d1b))
 - Skip tailscale installation in ci environments ([0fa239a](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/0fa239a))
@@ -17,15 +21,26 @@ All notable changes to this project will be documented in this file.
 - Use lowercase filter for os-specific variable loading ([e6b54b9](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/e6b54b9))
 
 ### Documentation
+- ***(readme)*** Remove zero-window security from the title itself ([74b5421](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/74b5421))
+- ***(readme)*** Remove zero-window security from the title itself ([433c9f7](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/433c9f7))
+- Add ansible_user to inventory to shortened the playbook run command ([b568da6](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/b568da6))
 - Fixed minor list formatting ([41c98f0](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/41c98f0))
 - Fix critical sudoers security flaw and harden ssh setup in readme ([f67f5fe](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f67f5fe))
 - Marked molecule tests and distro-agnostic support as done ([273e0ee](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/273e0ee))
 - Marked molecule tests and distro-agnostic support as done ([f6b6386](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f6b6386))
 
+### Refactoring
+- ***(vars)*** Extract ssh service name to distro-specific variables ([8dced53](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/8dced53))
+- ***(playbook)*** Remove redundant vars_files import for baseline role ([2420f72](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/2420f72))
+- ***(handlers)*** Remove failure masking from ssh restart task ([c47f7dd](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/c47f7dd))
+- ***(base)*** Use native dnf module for redhat package upgrades ([18a98e7](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/18a98e7))
+
 ### CI/CD Framework
+- Automated changelog to only update at 12am ([f8e5187](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f8e5187))
 - Removed -v flag and used env flag instead ([f369c6e](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f369c6e))
 
 ### Other Changes
+- ***(molecule)*** Add ssh service state assertion in verify.yml ([a57fe1b](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/a57fe1b))
 - Revert "docs: marked molecule tests and distro-agnostic support as done" ([07b84f8](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/07b84f8))
 - Complexity to enabled pubkey only authentication ([528b4cb](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/528b4cb))
 - Verify.yml with relevant tests ([e05b1ae](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/e05b1ae))
