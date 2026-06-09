@@ -4,17 +4,20 @@
     name: epel-release
     state: present
   when: ansible_facts['os_family'] == "RedHat"
+  tags: security
 
 - name: Install firewalld
   ansible.builtin.package:
     name: firewalld
     state: present
+  tags: security
 
 - name: Start and enable firewalld
   ansible.builtin.systemd:
     name: firewalld
     state: started
     enabled: true
+  tags: security
 
 - name: Allow HTTP/HTTPS
   ansible.posix.firewalld:
@@ -24,6 +27,8 @@
   loop:
     - http
     - https
+  when: linux_baseline_allow_web_ports | default(false) | bool
+  tags: security
 
 - name: Allow Tailscale
   ansible.posix.firewalld:
@@ -31,18 +36,19 @@
     interface: tailscale0
     permanent: true
     state: enabled
+  tags: security
 
 - name: Rate limit SSH
   ansible.posix.firewalld:
     rich_rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="{{ linux_baseline_ssh_port }}" protocol="tcp" limit value="5/m" accept'
     permanent: true
     state: enabled
+  tags: security
 
-- name: Configure automatic updates (RedHat)
+- name: Enable dnf-automatic timer
+  ansible.builtin.systemd:
+    name: dnf-automatic-install.timer
+    state: started
+    enabled: true
   when: ansible_facts['os_family'] == "RedHat"
-  block:
-    - name: Enable dnf-automatic timer
-      ansible.builtin.systemd:
-        name: dnf-automatic-install.timer
-        state: started
-        enabled: true
+  tags: security

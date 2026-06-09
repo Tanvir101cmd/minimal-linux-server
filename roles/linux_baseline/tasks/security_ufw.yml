@@ -17,6 +17,7 @@
   loop:
     - "80"
     - "443"
+  when: linux_baseline_allow_web_ports | default(false) | bool
   tags: security
 
 - name: Allow tailscale interface

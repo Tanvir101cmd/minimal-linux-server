@@ -1,4 +1,7 @@
 ---
+# Set to true if this server will act as a public-facing web server
+linux_baseline_allow_web_ports: false
+
 # Your username
 linux_baseline_username: "tanvir"
 
