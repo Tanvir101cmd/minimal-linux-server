@@ -17,7 +17,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
   - [Prerequisites](#prerequisites) 
-  - [1. Server Pre-configuration](#1-server-pre-configuration-zero-window-security)
+  - [1. Server Pre-configuration](#1-server-pre-configuration)
   - [2. Install ansible and collections](#2-install-ansible-and-collections)
   - [3. Create inventory file](#3-create-inventory-file)
   - [4. Configure your variables](#4-configure-your-variables)
@@ -92,7 +92,7 @@ After a successful run the server will have:
 - Ansible installed on **host machine** (the machine you run the playbook from)
 - `ansible.posix` and `community.general` collections
 
-### 1. Server Pre-configuration (Zero-Window Security)
+### 1. Server Pre-configuration
 
 To ensure maximum security, we will manually harden ssh to disable password authentication *before* granting Ansible its required deployment privileges. 
 
