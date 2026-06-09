@@ -19,7 +19,7 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu server. Run
   - [Prerequisites](#prerequisites) 
   - [1. Server Pre-configuration](#1-server-pre-configuration)
   - [2. Install ansible and collections](#2-install-ansible-and-collections)
-  - [3. Create inventory and ansible.cfg file](#3-create-inventory-file)
+  - [3. Create inventory file](#3-create-inventory-file)
   - [4. Configure your variables](#4-configure-your-variables)
   - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
@@ -43,12 +43,22 @@ After a successful run the server will have:
 ## Repository Structure
 
 ```bash
+.
 ├── ansible.cfg
 ├── CHANGELOG.md
 ├── docs
 │   └── MANUAL_SETUP.md
-├── hosts.ini
+├── generate-changelog.py
 ├── LICENSE
+├── molecule
+│   ├── rocky
+│   │   ├── converge.yml
+│   │   ├── molecule.yml
+│   │   └── verify.yml
+│   └── ubuntu
+│       ├── converge.yml
+│       ├── molecule.yml
+│       └── verify.yml
 ├── playbook.yml
 ├── README.md
 └── roles
@@ -82,17 +92,66 @@ After a successful run the server will have:
 - Ansible installed on **host machine** (the machine you run the playbook from)
 - `ansible.posix` and `community.general` collections
 
-### 1. Server Pre-configuration
+### 1. Server Pre-configuration (Zero-Window Security)
 
-Ansible can hit a 12 second SSH timeout on Ubuntu due to interactive TTY environment checks. Rather than granting full passwordless sudo (`NOPASSWD: ALL`), we can scope it to only the packges/tools Ansible uses in the playbook (e.g. apt, cp, mkdir etc) and increase the sudo timeout from 15m to 60m so that the playbook doesn't lose its escalated privilege mid-way in its execution:
+To ensure maximum security, we will manually harden ssh to disable password authentication *before* granting Ansible its required deployment privileges. 
 
-#### Make sure to always use visudo to create files inside `/etc/sudoers.d/`
+Follow this exact sequence:
 
-#### For this case, type: `sudo visudo -f /etc/sudoers.d/your_username-ansible` in the terminal and paste the below ruleset:
+#### Step 0: Make a ssh key (if needed)
+
+If you do not already have an SSH key pair on your **local machine**, generate a modern, secure ed25519 key:
+
+```bash
+ssh-keygen -t ed25519
+```
+
+#### Step 1: Push your SSH Public Key to the Server
+
+From your **local machine**, push your public key file to the remote server. Replace `your_username` and `192.168.0.150` with your actual setup:
+
+```bash
+ssh-copy-id -i ~/.ssh/id_ed25519.pub your_username@192.168.0.150
+```
+
+#### Step 2: SSH into the Server to Verify
+
+Verify that your local machine can use the key to establish an encrypted session:
+
+```bash
+ssh -i ~/.ssh/id_ed25519 your_username@192.168.0.150
+```
+
+#### Step 3: Disable Password Logins
+
+Once inside the remote server terminal, turn off password-based authentication permanently and restart the SSH daemon:
+
+```bash
+sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+```
+
+#### Step 4: Test login via ssh key
+
+**DO NOT close your current terminal window yet!** If you made a typo, you will be locked out of the server.
+
+Open a brand new, separate terminal window on your local machine and attempt to log in:
+
+```bash
+ssh -i ~/.ssh/id_ed25519 your_username@192.168.0.150
+```
+
+- **If it works without asking for password:** Your ssh lockdown is working perfectly. Now the only way to get into that server is that ssh-key
+  - **If it fails:** Use your first, still-open terminal window to debug your `/etc/ssh/sshd_config` file
+
+#### Step 5: Configure Passwordless Sudo
+
+Now that the server is completely locked down to physical SSH keys only, it is entirely safe to grant passwordless sudo privileges so Ansible can run its automation without hitting interactive TTY prompt blocks.
+
+Type `sudo visudo -f /etc/sudoers.d/your_username-ansible` and paste the following rule:
 
 ```ini
-Defaults:your_username timestamp_timeout=60
-your_username ALL=(ALL) NOPASSWD: /bin/sh, /usr/bin/apt-get, /usr/bin/apt, /usr/bin/systemctl, /usr/bin/ufw, /usr/bin/tee, /usr/bin/chmod, /usr/bin/chown, /usr/bin/cp, /usr/bin/mkdir, /usr/bin/python3, /usr/bin/python3.14
+your_username ALL=(ALL) NOPASSWD: ALL
 ```
 
 ---
