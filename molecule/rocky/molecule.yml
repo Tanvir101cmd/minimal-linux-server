@@ -7,10 +7,10 @@ driver:
 
 platforms:
   - name: rocky-instance
-    image: docker.io/geerlingguy/docker-rockylinux10-ansible:latest   
+    image: docker.io/geerlingguy/docker-rockylinux10-ansible:latest
     pre_build_image: true
     privileged: true
-    command: /usr/sbin/init    
+    command: /usr/sbin/init
     capabilities:
       - SYS_ADMIN
     volumes:

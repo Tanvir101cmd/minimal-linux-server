@@ -6,8 +6,8 @@ driver:
   name: podman
 
 platforms:
-  - name: ubuntu-instance 
-    image: docker.io/geerlingguy/docker-ubuntu2204-ansible:latest    
+  - name: ubuntu-instance
+    image: docker.io/geerlingguy/docker-ubuntu2204-ansible:latest
     pre_build_image: true
     privileged: true
     command: /lib/systemd/systemd

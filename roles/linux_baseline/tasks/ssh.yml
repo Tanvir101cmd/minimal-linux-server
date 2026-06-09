@@ -6,7 +6,7 @@
     key: "{{ lookup('file', linux_baseline_pub_key) }}"
   when: linux_baseline_pub_key | length > 0 and
         lookup('env', 'MOLECULE_SCENARIO_NAME') == ''
-  tags: 
+  tags:
     - ssh
     - molecule-notest
 
