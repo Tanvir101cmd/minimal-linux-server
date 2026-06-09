@@ -12,9 +12,9 @@
   failed_when: false
 
 - name: Reload firewalld
-  ansible.posix.firewalld:
-    state: restarted
-  failed_when: false
+  ansible.builtin.systemd:
+    name: firewalld
+    state: reloaded
 
 - name: Reload systemd
   ansible.builtin.systemd:
