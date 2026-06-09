@@ -142,7 +142,7 @@ ssh -i ~/.ssh/id_ed25519 your_username@192.168.0.150
 ```
 
 - **If it works without asking for password:** Your ssh lockdown is working perfectly. Now the only way to get into that server is that ssh-key
-  - **If it fails:** Use your first, still-open terminal window to debug your `/etc/ssh/sshd_config` file
+- **If it fails:** Use your first, still-open terminal window to debug your `/etc/ssh/sshd_config` file
 
 #### Step 5: Configure Passwordless Sudo
 
