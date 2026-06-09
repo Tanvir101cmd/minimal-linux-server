@@ -4,7 +4,11 @@
     user: "{{ linux_baseline_username }}"
     state: present
     key: "{{ lookup('file', linux_baseline_pub_key) }}"
-  tags: ssh
+  when: linux_baseline_pub_key | length > 0 and
+        lookup('env', 'MOLECULE_SCENARIO_NAME') == ''
+  tags: 
+    - ssh
+    - molecule-notest
 
 - name: Backup default ssh conf
   ansible.builtin.copy:

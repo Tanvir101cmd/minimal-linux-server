@@ -1,11 +1,11 @@
 linux_baseline_packages:
-  - curl
   - git
   - btop
   - vim
   - openssh-server
   - fail2ban
   - dnf-automatic
+  - "{{ linux_baseline_firewall_package }}"
 
 linux_baseline_zram_package:
   - zram-generator

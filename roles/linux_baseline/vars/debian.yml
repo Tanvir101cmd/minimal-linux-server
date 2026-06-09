@@ -7,6 +7,7 @@ linux_baseline_packages:
   - fail2ban
   - unattended-upgrades
   - apt-listchanges
+  - "{{ linux_baseline_firewall_package }}"
 
 linux_baseline_zram_package: zram-tools
 linux_baseline_zram_service: zramswap
