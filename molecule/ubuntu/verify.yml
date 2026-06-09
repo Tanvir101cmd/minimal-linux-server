@@ -43,3 +43,10 @@
       check_mode: true
       register: result
       failed_when: result.changed
+
+    - name: Assert SSH service is running and enabled
+      ansible.builtin.systemd:
+        name: ssh
+      register: ssh_service
+      failed_when: not (ssh_service.status.ActiveState == "active" and ssh_service.status.UnitFileState == "enabled")
+
