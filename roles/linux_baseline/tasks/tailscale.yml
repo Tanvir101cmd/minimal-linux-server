@@ -26,6 +26,7 @@
   when:
     - ansible_facts['os_family'] == "Debian"
     - linux_baseline_tailscale_check.rc != 0
+  register: linux_baseline_tailscale_download
   tags: tailscale
 
 - name: Execute Tailscale installer script (Debian)
@@ -34,6 +35,10 @@
     - ansible_facts['os_family'] == "Debian"
     - linux_baseline_tailscale_check.rc != 0
   changed_when: true
+  register: linux_baseline_tailscale_install
+  failed_when:
+    - tailscale_install.rc != 0
+    - "'already installed' not in linux_baseline_tailscale_install.stdout"
   tags: tailscale
 
 # 4. Universal: Start the service on both distros
@@ -42,4 +47,5 @@
     name: tailscaled
     state: started
     enabled: true
+  when: linux_baseline_tailscale_check.rc == 0 or linux_baseline_tailscale_install is changed
   tags: tailscale
