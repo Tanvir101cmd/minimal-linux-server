@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-06-10
+
+### Bug Fixes
+- ***(lynis)*** Create crontab if absent before setting permissions [file-7524] ([db4894b](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/db4894b))
+- ***(config)*** Remove allow_broken_conditionals flag ([7cc60f5](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/7cc60f5))
+
+### Documentation
+- ***(readme)*** Mention rocky linux in opening description ([8ad68a5](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/8ad68a5))
+- Added cloud-init removal section ([22c3c57](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/22c3c57))
+
 ## 2026-06-09
 
 ### Features
