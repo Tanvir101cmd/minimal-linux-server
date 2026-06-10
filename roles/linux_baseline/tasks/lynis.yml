@@ -53,9 +53,12 @@
 - name: Restrict system crontab permission [FILE-7524]
   ansible.builtin.file:
     path: /etc/crontab
+    state: touch
     mode: "0600"
     owner: root
     group: root
+    modification_time: preserve
+    access_time: preserve
   tags: lynis
 
 # ==================
