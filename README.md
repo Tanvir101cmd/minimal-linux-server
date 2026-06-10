@@ -128,7 +128,12 @@ Once inside the remote server terminal, turn off password-based authentication p
 
 ```bash
 sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-sudo systemctl restart ssh
+
+# If you are on ubuntu, please also delete the 50-cloud-init.conf as well to let it not override the sshd_config
+sudo rm /etc/ssh/sshd_config.d/50-cloud-init.conf
+
+# Finally restart the ssh or sshd for rhel 
+sudo systemctl restart ssh && sudo systemctl restart sshd 
 ```
 
 #### Step 4: Test login via ssh key
