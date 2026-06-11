@@ -136,7 +136,7 @@ sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh
 sudo rm /etc/ssh/sshd_config.d/50-cloud-init.conf
 
 # Finally restart the ssh or sshd for rhel 
-sudo systemctl restart ssh && sudo systemctl restart sshd 
+sudo systemctl restart ssh ; sudo systemctl restart sshd 
 ```
 
 #### Step 4: Test login via ssh key
