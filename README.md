@@ -151,9 +151,15 @@ ssh -i ~/.ssh/id_ed25519 your_username@192.168.0.150
 
 #### Step 5: Configure Passwordless Sudo
 
-Now that the server is completely locked down to physical SSH keys only, it is entirely safe to grant passwordless sudo privileges so Ansible can run its automation without hitting interactive TTY prompt blocks.
+Now that the server is completely locked down to physical SSH keys only, it is entirely safe to grant passwordless sudo privileges so Ansible can run its automation without hitting interactive TTY prompt blocks. Be sure to use **`sudo visudo`** instead of **`sudo nano`**
 
-Type `sudo visudo -f /etc/sudoers.d/your_username-ansible` and paste the following rule:
+Type:
+
+```bash
+sudo visudo -f /etc/sudoers.d/your_username-ansible
+```
+
+and paste the following rule:
 
 ```ini
 your_username ALL=(ALL) NOPASSWD: ALL
@@ -226,7 +232,7 @@ ansible-playbook -i hosts.ini playbook.yml
 | -----------| --------------------------------|
 | packages  | System update + base packages  |
 | ssh       | SSH hardening + key deployment |
-| security  | ufw + fail2ban                 |
+| security  | ufw/firewalld + fail2ban       |
 | tailscale | Mesh VPN service               |
 | lynis     | Lynis audit suggestions        |
 | system    | zram + swapfile removal        |
