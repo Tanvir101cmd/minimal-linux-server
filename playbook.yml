@@ -6,4 +6,3 @@
 
   roles:
     - role: linux_baseline
-# trigger stats recalculation
