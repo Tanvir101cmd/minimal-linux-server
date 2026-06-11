@@ -1,2 +1,2 @@
 *.yml linguist-language=Ansible linguist-detectable=true
-generate-changelog.py linguist-documentation=true
+generate-changelog.py linguist-detectable=false linguist-documentation=true
