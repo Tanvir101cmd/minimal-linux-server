@@ -13,16 +13,19 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu/rocky serve
 
 ## Table of Contents
 
+## Table of Contents
+
 - [Core Features](#core-features)
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
-  - [Prerequisites](#prerequisites) 
-  - [1. Server Pre-configuration](#1-server-pre-configuration)
-  - [2. Install ansible and collections](#2-install-ansible-and-collections)
-  - [3. Create inventory file](#3-create-inventory-file)
-  - [4. Configure your variables](#4-configure-your-variables)
-  - [5. Run the Ansible playbook](#5-run-the-ansible-playbook)
+  - [Prerequisites](#prerequisites)
+  - [Server Pre-configuration](#1-server-pre-configuration)
+  - [Install Ansible and Collections](#2-install-ansible-and-collections)
+  - [Create Inventory File](#3-create-inventory-file)
+  - [Configure Variables](#4-configure-your-variables)
+  - [Run the Playbook](#5-run-the-ansible-playbook)
 - [Troubleshooting](#troubleshooting)
+- [Testing](#testing)
 - [Roadmap](#roadmap)
 - [References and Acknowledgments](#references-and-acknowledgments)
 - [License](#license)
