@@ -1,5 +1,5 @@
 ---
-# 1. Check if Tailscale is installed (Runs on ALL distros, ensures variable is always defined)
+# 1. Check if Tailscale is already installed (universal)
 - name: Check if tailscale is installed
   ansible.builtin.command: which tailscale
   register: linux_baseline_tailscale_check
@@ -7,34 +7,21 @@
   changed_when: false
   tags: tailscale
 
-# 2. RedHat: Install via native package manager (Since it's in the rocky dnf repo!)
-- name: Install Tailscale via package manager (RedHat)
-  ansible.builtin.package:
-    name: tailscale
-    state: present
-  when:
-    - ansible_facts['os_family'] == "RedHat"
-    - linux_baseline_tailscale_check.rc != 0
-    - lookup('env', 'GITHUB_ACTIONS') != 'true'
-  tags: tailscale
-
-# 3. Debian: Download and run script (Since it's not in default apt repos)
-- name: Download Tailscale installer script (Debian)
+# 2. Download Tailscale installer script (universal)
+- name: Download Tailscale installer script
   ansible.builtin.get_url:
     url: https://tailscale.com/install.sh
     dest: /tmp/install.sh
     mode: "0755"
   when:
-    - ansible_facts['os_family'] == "Debian"
     - linux_baseline_tailscale_check.rc != 0
     - lookup('env', 'GITHUB_ACTIONS') != 'true'
-  register: linux_baseline_tailscale_download
   tags: tailscale
 
-- name: Execute Tailscale installer script (Debian)
+# 3. Execute Tailscale installer script (universal)
+- name: Execute Tailscale installer script
   ansible.builtin.command: /tmp/install.sh
   when:
-    - ansible_facts['os_family'] == "Debian"
     - linux_baseline_tailscale_check.rc != 0
     - lookup('env', 'GITHUB_ACTIONS') != 'true'
   changed_when: true
@@ -44,7 +31,7 @@
     - "'already installed' not in linux_baseline_tailscale_install.stdout"
   tags: tailscale
 
-# 4. Universal: Start the service on both distros
+# 4. Universal: Start and enable the service on both distros
 - name: Ensuring tailscaled is up and running
   ansible.builtin.systemd:
     name: tailscaled
