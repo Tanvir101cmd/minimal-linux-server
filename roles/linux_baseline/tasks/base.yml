@@ -14,6 +14,12 @@
     update_only: true  # noqa package-latest
   when: ansible_facts['os_family'] == "RedHat"
 
+- name: Install EPEL repo (Required for fail2ban on RHEL)
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
 - name: Install baseline pkgs
   ansible.builtin.package:
     name: "{{ linux_baseline_packages }}"
