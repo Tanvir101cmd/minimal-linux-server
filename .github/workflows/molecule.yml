@@ -18,6 +18,7 @@ jobs:
         scenario:
           - ubuntu
           - rocky
+          - debian
 
     steps:
       - name: Checkout repo
