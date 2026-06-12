@@ -283,6 +283,7 @@ This playbook is tested using [Molecule](https://ansible.readthedocs.io/projects
 
 | Distro         | Status |
 | ----------------| --------|
+| Debian 12      | ✅      |
 | Ubuntu 22.04   | ✅      |
 | Rocky Linux 10 | ✅      |
 
