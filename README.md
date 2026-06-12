@@ -13,8 +13,6 @@ A minimal, opinionated Ansible playbook for hardening a fresh ubuntu/rocky serve
 
 ## Table of Contents
 
-## Table of Contents
-
 - [Core Features](#core-features)
 - [Repository Structure](#repository-structure)
 - [Usage](#usage)
