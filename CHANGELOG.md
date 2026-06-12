@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-06-12
+
+### Bug Fixes
+- ***(fail2ban)*** Ensure auth.log is created for idempotent ([4f04b78](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/4f04b78))
+
+### Miscellaneous Tasks
+- ***(ci)*** Remove automated changelog generation workflow and script ([de24edc](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/de24edc))
+
+### CI/CD Framework
+- Added debian to molecule test matrix ([4715971](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/4715971))
+
+### Other Changes
+- ***(molecule)*** Added debian 12 test ([d45d009](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/d45d009))
+
+## 2026-06-11
+
+### Bug Fixes
+- ***(security)*** Skip selinux port configuration when disabled ([f0e3cad](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/f0e3cad))
+- ***(ssh)*** Add selinux and firewalld rules for alternative port 2222 ([da876ac](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/da876ac))
+- ***(deps)*** Install epel repo before baseline packages ([d296e62](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/d296e62))
+- Use yaml language detection in .gitattributes ([a9f61ef](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/a9f61ef))
+- Correct .gitattributes syntax for ansible language detection ([7d052c4](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/7d052c4))
+- Hide python script from github language stats ([86b83fe](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/86b83fe))
+
+### Documentation
+- Using sequential exec for restarting ssh/sshd ([6935b46](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/6935b46))
+- Added testing section to toc ([2194995](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/2194995))
+- Update readme setup steps and security table ([6a0bcc8](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/6a0bcc8))
+
+### Refactoring
+- ***(tailscale)*** Use unified official install script for all distros ([d468736](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/d468736))
+
+### Miscellaneous Tasks
+- Force github linguist recalculation ([8b87296](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/8b87296))
+
+### CI/CD Framework
+- Added -- -v flag to analyze the molecule issue ([134c8df](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/134c8df))
+
+### Other Changes
+- removed '# trigger stats recalculation' placeholder ([d0390ca](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/d0390ca))
+- Force GitHub to recognize Ansible playbooks ([8374356](https://github.com/Tanvir101cmd/ansible-linux-baseline/commit/8374356))
+
 ## 2026-06-10
 
 ### Bug Fixes
