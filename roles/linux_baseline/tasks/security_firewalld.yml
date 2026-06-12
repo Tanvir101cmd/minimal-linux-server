@@ -56,7 +56,7 @@
 
 - name: Allow SSH to use port 2222 in SELinux
   community.general.seport:
-    ports: 2222
+    ports: "{{ linux_baseline_ssh_port }}"
     proto: tcp
     setype: ssh_port_t
     state: present
