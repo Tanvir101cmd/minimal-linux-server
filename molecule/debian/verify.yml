@@ -1,0 +1,56 @@
+---
+- name: Verify Debian
+  hosts: all
+  become: true
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Assert UFW is installed
+      ansible.builtin.assert:
+        that: "'ufw' in ansible_facts.packages"
+        fail_msg: "UFW is not installed"
+
+    - name: Assert fail2ban is installed
+      ansible.builtin.assert:
+        that: "'fail2ban' in ansible_facts.packages"
+        fail_msg: "fail2ban is not installed"
+
+    - name: Assert unattended-upgrades is installed
+      ansible.builtin.assert:
+        that: "'unattended-upgrades' in ansible_facts.packages"
+        fail_msg: "unattended-upgrades is not installed"
+
+    - name: Assert SSH config disables root login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "PermitRootLogin no"
+        state: present
+        check_mode: true
+      register: result
+      failed_when: result.changed
+
+    - name: Assert SSH uses custom port
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "Port 2222"
+        state: present
+        check_mode: true
+      register: result
+      failed_when: result.changed
+
+    - name: Assert password auth is disabled
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "PasswordAuthentication no"
+        state: present
+        check_mode: true
+      register: result
+      failed_when: result.changed
+
+    - name: Assert SSH service is running and enabled
+      ansible.builtin.systemd:
+        name: ssh
+      register: ssh_service
+      failed_when: not (ssh_service.status.ActiveState == "active" and ssh_service.status.UnitFileState == "enabled")

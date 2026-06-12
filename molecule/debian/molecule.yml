@@ -1,0 +1,33 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: podman
+
+platforms:
+  - name: debian-instance
+    image: docker.io/geerlingguy/docker-debian12-ansible:latest
+    pre_build_image: true
+    privileged: true
+    command: /lib/systemd/systemd
+    capabilities:
+      - SYS_ADMIN
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+
+provisioner:
+  name: ansible
+  options:
+    skip-tags: tailscale,lynis
+  env:
+    ANSIBLE_ROLES_PATH: "../../roles"
+  inventory:
+    group_vars:
+      all:
+        linux_baseline_pub_key: ""
+
+verifier:
+  name: ansible
+
