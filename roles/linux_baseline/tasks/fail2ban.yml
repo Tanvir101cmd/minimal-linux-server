@@ -22,6 +22,22 @@
   notify: Restart fail2ban service
   tags: security
 
+- name: Ensure auth.log exists (required for fail2ban on Debian)
+  ansible.builtin.command:
+    cmd: "touch {{ linux_baseline_auth_log }}"
+    creates: "{{ linux_baseline_auth_log }}"
+  when: ansible_facts['os_family'] == "Debian"
+  tags: security
+
+- name: Set permissions on auth.log
+  ansible.builtin.file:
+    path: "{{ linux_baseline_auth_log }}"
+    owner: root
+    group: adm
+    mode: "0640"
+  when: ansible_facts['os_family'] == "Debian"
+  tags: security
+
 - name: Start fail2ban
   ansible.builtin.systemd:
     name: fail2ban
